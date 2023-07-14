@@ -1,6 +1,12 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "analytics-ui",
+  "description": "Analytics UI created with Nuxt 3 + Tailwind CSS",
+  "version": "0.0.1",
+  "author": {
+    "name": "Behon Baker",
+    "email": "behon.baker@yahoo.com",
+    "url": "https://behonbaker.com"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
