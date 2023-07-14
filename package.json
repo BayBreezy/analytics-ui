@@ -1,0 +1,33 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "clean": "rm -rf .nuxt dist node_modules package-lock.json yarn.lock && yarn",
+    "format:prettier": "prettier --write ."
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "0.6.7",
+    "@nuxtjs/tailwindcss": "^6.8.0",
+    "@types/node": "^20.4.2",
+    "@types/prettier": "^2.7.3",
+    "nuxt": "^3.6.2",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.4.1"
+  },
+  "dependencies": {
+    "@davestewart/nuxt-scrollbar": "^1.0.0",
+    "@headlessui-float/vue": "^0.11.2",
+    "@morev/vue-transitions": "^2.3.6",
+    "@types/chart.js": "^2.9.37",
+    "@vueuse/nuxt": "^10.2.1",
+    "chart.js": "^4.3.0",
+    "nuxt-headlessui": "^1.1.4",
+    "nuxt-icon": "^0.4.2",
+    "vue-chartjs": "^5.2.0"
+  }
+}
