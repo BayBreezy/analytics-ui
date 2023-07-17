@@ -7,7 +7,6 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "nuxt-headlessui",
     "@morev/vue-transitions/nuxt",
-    "@davestewart/nuxt-scrollbar",
   ],
   tailwindcss: { exposeConfig: true },
   headlessui: { prefix: "H" },

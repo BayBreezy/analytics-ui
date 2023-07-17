@@ -1,8 +1,8 @@
 <template>
   <section class="mt-5">
     <p class="font-bold">New customers</p>
-    <NuxtScrollbar
-      class="mt-5 flex w-full items-start gap-6 rounded-lg border bg-background px-5 py-5"
+    <div
+      class="mt-5 flex w-full items-start gap-6 overflow-x-auto rounded-lg border bg-background px-5 py-5 scrollbar-thin scrollbar-thumb-input scrollbar-thumb-rounded-md"
     >
       <div class="flex shrink-0 flex-col items-center gap-2">
         <button class="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
@@ -25,7 +25,7 @@
           </div>
         </div>
       </template>
-    </NuxtScrollbar>
+    </div>
   </section>
 </template>
 

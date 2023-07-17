@@ -1,7 +1,7 @@
 <template>
   <div class="mt-5">
     <p class="font-bold">Sales over time</p>
-    <div class="mt-5 h-[300px] rounded-lg border bg-background p-3">
+    <div class="mt-5 h-[300px] rounded-lg border bg-background md:p-3">
       <Line :data="data" :options="options" />
     </div>
   </div>

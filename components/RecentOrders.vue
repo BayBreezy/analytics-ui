@@ -2,7 +2,9 @@
   <div class="mt-5">
     <p class="font-bold">Recent orders</p>
 
-    <NuxtScrollbar tag="div" class="mt-5 rounded-md border bg-background">
+    <div
+      class="mt-5 overflow-x-auto rounded-md border bg-background scrollbar-thin scrollbar-thumb-input scrollbar-thumb-rounded-md"
+    >
       <table class="w-full border-collapse">
         <thead>
           <tr class="border-b text-left text-xs">
@@ -27,6 +29,6 @@
           </tr>
         </tbody>
       </table>
-    </NuxtScrollbar>
+    </div>
   </div>
 </template>
