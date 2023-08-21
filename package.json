@@ -24,7 +24,7 @@
     "@types/prettier": "^3.0.0",
     "nuxt": "^3.6.5",
     "prettier": "^3.0.1",
-    "prettier-plugin-tailwindcss": "^0.5.2",
+    "prettier-plugin-tailwindcss": "^0.5.3",
     "tailwind-scrollbar": "^3.0.5"
   },
   "dependencies": {
