@@ -23,7 +23,7 @@
     "@types/node": "^20.5.1",
     "@types/prettier": "^3.0.0",
     "nuxt": "^3.6.5",
-    "prettier": "^3.0.1",
+    "prettier": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.3",
     "tailwind-scrollbar": "^3.0.5"
   },
