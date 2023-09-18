@@ -20,9 +20,9 @@
     "@nuxt/devtools": "0.8.3",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@types/chart.js": "^2.9.38",
-    "@types/node": "^20.6.0",
+    "@types/node": "^20.6.2",
     "@types/prettier": "^3.0.0",
-    "nuxt": "^3.7.1",
+    "nuxt": "^3.7.3",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwind-scrollbar": "^3.0.5"
