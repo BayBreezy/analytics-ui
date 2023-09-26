@@ -17,12 +17,12 @@
     "format:prettier": "prettier --write ."
   },
   "devDependencies": {
-    "@nuxt/devtools": "0.8.3",
+    "@nuxt/devtools": "0.8.5",
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@types/chart.js": "^2.9.38",
-    "@types/node": "^20.6.2",
+    "@types/node": "^20.7.0",
     "@types/prettier": "^3.0.0",
-    "nuxt": "^3.7.3",
+    "nuxt": "^3.7.4",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwind-scrollbar": "^3.0.5"
