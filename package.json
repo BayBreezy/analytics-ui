@@ -17,10 +17,9 @@
     "format:prettier": "prettier --write ."
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.8.0",
+    "@nuxtjs/tailwindcss": "^6.8.1",
     "@types/chart.js": "^2.9.39",
-    "@types/node": "^20.8.7",
-    "@types/prettier": "^3.0.0",
+    "@types/node": "^20.8.9",
     "nuxt": "^3.8.0",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
@@ -31,7 +30,7 @@
     "@vueuse/nuxt": "^10.5.0",
     "chart.js": "^4.4.0",
     "nuxt-headlessui": "^1.1.4",
-    "nuxt-icon": "^0.5.0",
+    "nuxt-icon": "^0.6.1",
     "vue-chartjs": "^5.2.0"
   }
 }
