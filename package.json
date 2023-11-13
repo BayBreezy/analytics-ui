@@ -30,7 +30,7 @@
     "@vueuse/nuxt": "^10.5.0",
     "chart.js": "^4.4.0",
     "nuxt-headlessui": "^1.1.4",
-    "nuxt-icon": "^0.6.1",
+    "nuxt-icon": "^0.6.5",
     "vue-chartjs": "^5.2.0"
   }
 }
