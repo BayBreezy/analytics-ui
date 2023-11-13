@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.8.1",
-    "@types/chart.js": "^2.9.39",
+    "@types/chart.js": "^2.9.40",
     "@types/node": "^20.8.9",
     "nuxt": "^3.8.0",
     "prettier": "^3.0.3",
