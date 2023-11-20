@@ -19,7 +19,7 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.9.4",
     "@types/chart.js": "^2.9.40",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.9.2",
     "nuxt": "^3.8.1",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
