@@ -17,7 +17,7 @@
     "format:prettier": "prettier --write ."
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.10.0",
+    "@nuxtjs/tailwindcss": "^6.10.1",
     "@types/chart.js": "^2.9.41",
     "@types/node": "^20.9.4",
     "nuxt": "^3.8.2",
