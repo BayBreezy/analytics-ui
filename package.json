@@ -19,18 +19,18 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.10.1",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.10.4",
     "nuxt": "^3.8.2",
-    "prettier": "^3.1.0",
-    "prettier-plugin-tailwindcss": "^0.5.7",
+    "prettier": "^3.1.1",
+    "prettier-plugin-tailwindcss": "^0.5.9",
     "tailwind-scrollbar": "^3.0.5"
   },
   "dependencies": {
     "@morev/vue-transitions": "^2.3.6",
-    "@vueuse/nuxt": "^10.6.1",
-    "chart.js": "^4.4.0",
+    "@vueuse/nuxt": "^10.7.0",
+    "chart.js": "^4.4.1",
     "nuxt-headlessui": "^1.1.4",
-    "nuxt-icon": "^0.6.6",
+    "nuxt-icon": "^0.6.7",
     "vue-chartjs": "^5.2.0"
   }
 }
