@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --host",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -21,16 +21,18 @@
     "@types/chart.js": "^2.9.41",
     "@types/node": "^20.10.6",
     "nuxt": "^3.9.1",
+    "nuxt-icon": "^0.6.8",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwind-scrollbar": "^3.0.5"
+    "tailwind-scrollbar": "^3.0.5",
+    "vue": "^3.4.5",
+    "vue-router": "^4.2.5"
   },
   "dependencies": {
     "@morev/vue-transitions": "^2.3.6",
     "@vueuse/nuxt": "^10.7.1",
     "chart.js": "^4.4.1",
     "nuxt-headlessui": "^1.1.5",
-    "nuxt-icon": "^0.6.8",
     "vue-chartjs": "^5.3.0"
   }
 }
