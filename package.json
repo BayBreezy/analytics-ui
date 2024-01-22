@@ -17,15 +17,15 @@
     "format:prettier": "prettier --write ."
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.10.4",
+    "@nuxtjs/tailwindcss": "^6.11.0",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^20.11.2",
-    "nuxt": "^3.9.1",
+    "@types/node": "^20.11.5",
+    "nuxt": "^3.9.3",
     "nuxt-icon": "^0.6.8",
-    "prettier": "^3.2.2",
+    "prettier": "^3.2.4",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwind-scrollbar": "^3.0.5",
-    "vue": "^3.4.13",
+    "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
