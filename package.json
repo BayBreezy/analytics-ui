@@ -19,8 +19,8 @@
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^20.11.25",
-    "nuxt": "^3.10.3",
+    "@types/node": "^20.11.29",
+    "nuxt": "^3.11.1",
     "nuxt-icon": "^0.6.9",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.12",
@@ -29,7 +29,7 @@
     "vue-router": "^4.3.0"
   },
   "dependencies": {
-    "@morev/vue-transitions": "^3.0.1",
+    "@morev/vue-transitions": "^3.0.2",
     "@vueuse/nuxt": "^10.9.0",
     "chart.js": "^4.4.2",
     "nuxt-headlessui": "^1.1.5",
