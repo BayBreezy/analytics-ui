@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+
   modules: [
     "@nuxtjs/tailwindcss",
     "nuxt-icon",
@@ -8,8 +9,10 @@ export default defineNuxtConfig({
     "nuxt-headlessui",
     "@morev/vue-transitions/nuxt",
   ],
+
   tailwindcss: { exposeConfig: true },
   headlessui: { prefix: "H" },
+
   app: {
     head: {
       title: "Analytics",
@@ -22,4 +25,6 @@ export default defineNuxtConfig({
       ],
     },
   },
+
+  compatibilityDate: "2024-07-09",
 });
