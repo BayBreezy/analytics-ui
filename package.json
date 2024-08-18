@@ -1,7 +1,7 @@
 {
   "name": "analytics-ui",
-  "description": "Analytics UI created with Nuxt 3 + Tailwind CSS",
   "version": "0.0.1",
+  "description": "Analytics UI created with Nuxt 3 + Tailwind CSS",
   "author": {
     "name": "Behon Baker",
     "email": "behon.baker@yahoo.com",
@@ -9,30 +9,30 @@
   },
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
     "clean": "rm -rf .nuxt dist node_modules package-lock.json yarn.lock && npm i",
-    "format:prettier": "prettier --write ."
-  },
-  "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.12.0",
-    "@types/chart.js": "^2.9.41",
-    "@types/node": "^20.14.10",
-    "nuxt": "^3.12.3",
-    "nuxt-icon": "^0.6.10",
-    "prettier": "^3.3.2",
-    "prettier-plugin-tailwindcss": "^0.6.5",
-    "tailwind-scrollbar": "^3.1.0",
-    "vue": "^3.4.31",
-    "vue-router": "^4.4.0"
+    "dev": "nuxt dev --host",
+    "format:prettier": "prettier --write .",
+    "generate": "nuxt generate",
+    "postinstall": "nuxt prepare",
+    "preview": "nuxt preview"
   },
   "dependencies": {
     "@morev/vue-transitions": "^3.0.2",
-    "@vueuse/nuxt": "^10.11.0",
+    "@vueuse/nuxt": "^11.0.0",
     "chart.js": "^4.4.3",
     "nuxt-headlessui": "^1.2.0",
     "vue-chartjs": "^5.3.1"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@types/chart.js": "^2.9.41",
+    "@types/node": "^22.4.0",
+    "nuxt": "^3.12.4",
+    "nuxt-icon": "^0.6.10",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "tailwind-scrollbar": "^3.1.0",
+    "vue": "^3.4.38",
+    "vue-router": "^4.4.3"
   }
 }
