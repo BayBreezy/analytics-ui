@@ -12,9 +12,9 @@
         </p>
       </NuxtLink>
 
-      <HDisclosure v-slot="{ open }" v-else>
+      <HDisclosure as="div" class="w-full" v-slot="{ open }" v-else>
         <HDisclosureButton
-          class="inline-flex items-center justify-between p-3 px-4 text-left text-[15px]"
+          class="inline-flex w-full items-center justify-between p-3 px-4 text-left text-[15px]"
         >
           <div class="flex items-center gap-4">
             <Icon v-if="l.icon" :name="l.icon" class="h-5 w-5 text-muted-foreground" />

@@ -18,16 +18,16 @@
   },
   "dependencies": {
     "@morev/vue-transitions": "^3.0.2",
-    "@vueuse/nuxt": "^11.0.0",
-    "chart.js": "^4.4.3",
+    "@vueuse/nuxt": "^11.0.3",
+    "chart.js": "^4.4.4",
     "nuxt-headlessui": "^1.2.0",
     "vue-chartjs": "^5.3.1"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^22.4.0",
-    "nuxt": "^3.12.4",
+    "@types/node": "^22.5.2",
+    "nuxt": "^3.13.0",
     "nuxt-icon": "^0.6.10",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
