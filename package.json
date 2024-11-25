@@ -17,22 +17,22 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@morev/vue-transitions": "^3.0.2",
-    "@vueuse/nuxt": "^11.1.0",
-    "chart.js": "^4.4.5",
+    "@morev/vue-transitions": "^3.0.5",
+    "@vueuse/nuxt": "^11.3.0",
+    "chart.js": "^4.4.6",
     "nuxt-headlessui": "^1.2.0",
-    "vue-chartjs": "^5.3.1"
+    "vue-chartjs": "^5.3.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^22.8.1",
-    "nuxt": "^3.13.2",
+    "@types/node": "^22.9.3",
+    "nuxt": "^3.14.1592",
     "nuxt-icon": "^0.6.10",
     "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.8",
+    "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwind-scrollbar": "^3.1.0",
-    "vue": "^3.5.12",
+    "vue": "^3.5.13",
     "vue-router": "^4.4.5"
   }
 }
