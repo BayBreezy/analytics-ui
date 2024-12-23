@@ -18,21 +18,21 @@
   },
   "dependencies": {
     "@morev/vue-transitions": "^3.0.5",
-    "@vueuse/nuxt": "^11.3.0",
-    "chart.js": "^4.4.6",
+    "@vueuse/nuxt": "^12.2.0",
+    "chart.js": "^4.4.7",
     "nuxt-headlessui": "^1.2.0",
     "vue-chartjs": "^5.3.2"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@types/chart.js": "^2.9.41",
-    "@types/node": "^22.9.3",
+    "@types/node": "^22.10.2",
     "nuxt": "^3.14.1592",
     "nuxt-icon": "^0.6.10",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwind-scrollbar": "^3.1.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.5.0"
   }
 }
