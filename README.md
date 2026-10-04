@@ -1,10 +1,63 @@
 # Analytics UI
 
-An analytics dashboard built with [Nuxt 4](https://nuxt.com), [UI Thing](https://uithing.com) and Tailwind CSS v4. It runs entirely on dummy data: a mock API lives in Nuxt's `server/` directory and generates its data with [faker](https://fakerjs.dev).
+[![CI](https://github.com/BayBreezy/analytics-ui/actions/workflows/ci.yml/badge.svg?branch=2026-update)](https://github.com/BayBreezy/analytics-ui/actions/workflows/ci.yml)
+
+An ecommerce admin dashboard built with [Nuxt 4](https://nuxt.com), [UI Thing](https://uithing.com) and [Tailwind CSS v4](https://tailwindcss.com). It runs entirely on mock data: the API lives in Nuxt's `server/` directory and generates its data with [faker](https://fakerjs.dev), so there is nothing to set up but `bun install`.
+
+> **A demo, not a product.** Sign-in is simulated (there are no real passwords and the session cookie isn't signed), nothing is charged and no email is sent. Everything you change is kept in server memory and resets when the server restarts.
+
+![The dashboard](docs/screenshots/dashboard.jpg)
+
+**What's in it**
+
+- A dashboard with metric cards, a sales chart, recent orders, customers, activity and reminders
+- Customers, orders, products and staff, each with search, sorting, filters, create, edit, delete, CSV export and bulk actions
+- Analytics (overview, statistics, trends), a team page with invitations, billing, settings, help and a profile
+- Three roles (admin, manager, support) that are enforced in the navigation, the pages and the API
+- A command palette (`Ctrl/Cmd + K`), keyboard shortcuts, a notification bell, light and dark mode and layouts that work down to a phone
+- Almost 400 tests: unit, API and browser, run by GitHub Actions on every push and pull request
+
+| Dark mode                                                      | Bulk actions                                                        |
+| -------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Dashboard in dark mode](docs/screenshots/dashboard-dark.jpg) | ![Customers with two rows selected](docs/screenshots/customers.jpg) |
+| **Analytics**                                                  | **Command palette**                                                 |
+| ![Statistics](docs/screenshots/statistics.jpg)                 | ![Command palette](docs/screenshots/command-palette.jpg)            |
+
+<img src="docs/screenshots/dashboard-mobile.jpg" alt="The dashboard on a phone" width="260">
 
 This is a rebuild of the app from the July 2023 [YouTube tutorial](https://www.youtube.com/watch?v=0ZwaOAlRAWA). The original version is preserved on the [`tutorial-2023`](https://github.com/BayBreezy/analytics-ui/tree/tutorial-2023) branch.
 
-> **Work in progress.** The app is being rebuilt in phases. The [Features](#features) section below describes what works today, and the [Roadmap](#roadmap) lists what's next.
+## Contents
+
+[Getting started](#getting-started) · [Features](#features) · [Tech stack](#tech-stack) · [Testing](#testing) · [Project structure](#project-structure) · [Contributing](#contributing)
+
+## Getting started
+
+```bash
+bun install
+bun run dev
+```
+
+The app runs at `http://localhost:3000`. Sign in with the demo account (`demo@analytics.test`, any password of 8 or more characters), or click **Fill demo credentials** on the login page. See [Roles](#roles) to sign in as a manager or a support agent.
+
+### Scripts
+
+| Script                | What it does                                    |
+| --------------------- | ----------------------------------------------- |
+| `bun run dev`         | Start the dev server                            |
+| `bun run build`       | Build for production                            |
+| `bun run preview`     | Preview the production build                    |
+| `bun run lint`        | Lint with oxlint (`lint:fix` to fix)            |
+| `bun run format`      | Format with oxfmt (`format:check` to verify)    |
+| `bun run typecheck`   | Type-check the app, server, Vue files and tests |
+| `bun run test`        | Run all the tests (see [Testing](#testing))     |
+| `bun run screenshots` | Retake the pictures in `docs/screenshots`       |
+
+### Configuration
+
+| Variable                      | Default          | Description                                                                                 |
+| ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
+| `NUXT_PUBLIC_IDLE_TIMEOUT_MS` | `300000` (5 min) | Default inactivity time before a user is signed out. Each browser can change it in Settings |
 
 ## Features
 
@@ -144,18 +197,6 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - Light and dark mode, with a toggle on every page.
 - Responsive layouts that work down to phone width.
 
-## Roadmap
-
-- [x] **Authentication**: login, register, forgot password, route protection, idle sign-out
-- [x] **Dashboard shell**: sidebar, header, profile menu and navigation
-- [x] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
-- [x] **Customers, orders, products and staff**: list, create, details, edit and delete, backed by an in-memory mock store
-- [x] **Analytics and team members**: overview, statistics and trends pages, and a team page with invitations
-- [x] **Profile and settings**: your account details, password and devices, store settings, appearance, notifications, idle sign-out and a data reset
-- [x] **Billing and Help**: a demo subscription with invoices, an FAQ, support requests and keyboard shortcuts
-- [x] **Roles, notifications and reminders**: enforced roles, a notification bell fed by store events and the Settings switches, and saved reminders
-- [x] **Power-user features**: a command palette with search, CSV export and bulk actions on the lists
-
 ## Tech stack
 
 - [Nuxt 4](https://nuxt.com) with Vue 3, running on [Bun](https://bun.sh)
@@ -165,33 +206,6 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - [ApexCharts](https://apexcharts.com) and [TanStack Table](https://tanstack.com/table) (UI Thing components) for charts and tables
 - [@faker-js/faker](https://fakerjs.dev) for mock data
 - [oxlint](https://oxc.rs/docs/guide/usage/linter) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting
-
-## Getting started
-
-```bash
-bun install
-bun run dev
-```
-
-The app runs at `http://localhost:3000`. Sign in with the demo account above, or click **Fill demo credentials**.
-
-### Scripts
-
-| Script              | What it does                                    |
-| ------------------- | ----------------------------------------------- |
-| `bun run dev`       | Start the dev server                            |
-| `bun run build`     | Build for production                            |
-| `bun run preview`   | Preview the production build                    |
-| `bun run lint`      | Lint with oxlint (`lint:fix` to fix)            |
-| `bun run format`    | Format with oxfmt (`format:check` to verify)    |
-| `bun run typecheck` | Type-check the app, server, Vue files and tests |
-| `bun run test`      | Run all the tests (see [Testing](#testing))     |
-
-### Configuration
-
-| Variable                      | Default          | Description                                                                                 |
-| ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
-| `NUXT_PUBLIC_IDLE_TIMEOUT_MS` | `300000` (5 min) | Default inactivity time before a user is signed out. Each browser can change it in Settings |
 
 ## Testing
 
@@ -257,5 +271,7 @@ Git hooks (husky) run on every commit:
 
 - **pre-commit** runs lint-staged, which lints and formats the staged files.
 - **commit-msg** runs commitlint, so commit messages must follow [Conventional Commits](https://www.conventionalcommits.org) (for example `feat: add sidebar`).
+
+GitHub Actions (`.github/workflows/ci.yml`) runs the linter, formatter check, type check, unit tests and build, then the API and browser tests, and checks the commit messages on pull requests. Run the same commands locally before you push.
 
 Add components with the UI Thing CLI, for example `bunx --bun ui-thing@latest add button`.

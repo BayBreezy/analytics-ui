@@ -50,4 +50,4 @@ Nuxt 4 + UI Thing + Tailwind v4 ecommerce admin dashboard on dummy data. Package
 
 ## Docs
 
-When a feature lands, update the README's **Features** section and **Roadmap**. Describe only what is built and verified.
+When a feature lands, update the README's **Features** section, and retake the pictures with `bun run screenshots` if the screens changed. Describe only what is built and verified.
