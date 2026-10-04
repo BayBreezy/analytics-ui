@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "es5",
+  "vueIndentScriptAndStyle": true,
+  "sortTailwindcss": {
+    "stylesheet": "./app/assets/css/tailwind.css",
+    "functions": ["tw", "cn", "tv", "clsx"]
+  },
+  "ignorePatterns": [
+    ".nuxt",
+    ".output",
+    ".data",
+    "node_modules",
+    "dist",
+    "bun.lock",
+    "app/components/Ui/**"
+  ]
+}
