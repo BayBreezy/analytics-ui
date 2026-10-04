@@ -19,11 +19,7 @@
           <span class="text-muted-foreground">{{ stat.caption }}</span>
         </div>
       </div>
-      <div
-        class="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"
-      >
-        <Icon :name="icon" class="size-5" />
-      </div>
+      <UiFancyIcon :icon="icon" :color="color" theme="gradient" size="lg" />
     </UiCardContent>
   </UiCard>
 </template>
@@ -38,7 +34,15 @@
     averageOrder: "lucide:receipt",
   };
 
+  const colors: Record<StatCard["id"], "success" | "primary" | "info" | "warning"> = {
+    revenue: "success",
+    orders: "primary",
+    customers: "info",
+    averageOrder: "warning",
+  };
+
   const icon = computed(() => icons[props.stat.id]);
+  const color = computed(() => colors[props.stat.id]);
   const value = computed(() =>
     props.stat.format === "currency"
       ? formatCurrency(props.stat.value, props.stat.value >= 1000)

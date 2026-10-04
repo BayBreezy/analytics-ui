@@ -13,7 +13,7 @@
             <UiSkeleton class="h-8 w-32" />
             <UiSkeleton class="h-4 w-40" />
           </div>
-          <UiSkeleton class="size-11 rounded-lg" />
+          <UiSkeleton class="size-12 rounded-full" />
         </UiCardContent>
       </UiCard>
     </template>
