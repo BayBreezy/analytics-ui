@@ -22,22 +22,30 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 
 **Demo account:** `demo@analytics.test` / `password123`. In practice, any well-formed email and a password of 8+ characters will sign you in.
 
+### Admin layout
+
+- **Collapsible sidebar** built with UI Thing's Sidebar. It collapses to an icon rail (with tooltips), remembers its state in a cookie, toggles with `Ctrl/Cmd + B`, and opens as a slide-over sheet on mobile.
+- **Store navigation:** Dashboard, Customers, Orders, Products, Staff, Analytics, Settings and Help, with expandable sub-menus (List and Create), active-page highlighting and breadcrumbs in the header.
+- **User menu** in the sidebar footer, with Profile, Billing, Team members and Log out.
+- **"Coming soon" pages.** Every sidebar link has a real URL. Only the dashboard is built so far, so the rest show a placeholder page. Edit, Delete and Details have pages (for example `/customers/edit`, `/customers/delete` and `/customers/details`, and the same for orders, products and staff) but no sidebar link, because they need a record. They will be reached from the rows of each list page. Unknown URLs still return a 404.
+
 ### Mock API
 
-Server routes under `server/api/auth/` back the forms: `login`, `register`, `forgot-password` and `logout`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/auth-schemas.ts`), and responses include a short artificial delay so loading states are visible.
+All data is generated with faker, so there is no database.
+
+- `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/auth-schemas.ts`).
 
 ### General
 
 - Light and dark mode, with a toggle on every page.
 - Responsive layouts that work down to phone width.
-- Placeholder `/dashboard` page that shows the signed-in user. The full dashboard is next on the [roadmap](#roadmap).
 
 ## Roadmap
 
 - [x] **Authentication**: login, register, forgot password, route protection, idle sign-out
-- [ ] **Dashboard shell**: sidebar, header, profile menu and navigation
-- [ ] **Mock data and dashboard widgets**: stat cards, ApexCharts sales chart, TanStack Table of recent orders, customers and reminders
-- [ ] **Real pages for the sidebar links**: customers, orders, products, staff, analytics, settings
+- [x] **Dashboard shell**: sidebar, header, profile menu and navigation
+- [ ] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
+- [ ] **Real pages for the sidebar links**: customers, orders, products, staff, analytics, settings (currently "coming soon" pages)
 
 ## Tech stack
 
@@ -78,15 +86,19 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 
 ```
 app/
-  components/Ui/     UI Thing components (generated, safe to edit)
+  components/
+    App/             Sidebar and header for the admin layout
+    Ui/              UI Thing components (generated, safe to edit)
   composables/       useAuth: session, login, register, logout
-  layouts/           auth (centered card) and default
+  layouts/           auth (centered card) and default (admin layout with sidebar)
   middleware/        auth.global.ts: route protection and last-visited redirect
   pages/             login, register, forgot-password, dashboard
+  placeholders/      the shared "coming soon" page
   plugins/           idle-logout.client.ts
+  utils/             navigation.ts (sidebar links and routes), format helpers
 server/
   api/auth/          mock auth endpoints
-  utils/             faker helpers and request validation
+  utils/             faker helpers, seeded mock data and request validation
 shared/              zod schemas and types used by both the app and the server
 ```
 

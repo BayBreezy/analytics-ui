@@ -1,8 +1,29 @@
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
+import { getPlaceholderRoutes } from "./app/utils/navigation";
+
+const comingSoonPage = fileURLToPath(
+  new URL("./app/placeholders/coming-soon.vue", import.meta.url)
+);
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+
+  hooks: {
+    // Every sidebar link without a real page yet gets a "coming soon" route. These are registered
+    // explicitly (rather than with a catch-all page) so unknown URLs like /sw.js still 404.
+    "pages:extend"(pages) {
+      for (const { path } of getPlaceholderRoutes()) {
+        pages.push({
+          name: `coming-soon${path.replaceAll("/", "-")}`,
+          path,
+          file: comingSoonPage,
+        });
+      }
+    },
+  },
 
   modules: [
     "@nuxtjs/color-mode",
