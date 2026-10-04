@@ -17,7 +17,8 @@
     "test": "bun run test:unit && bun run test:api && bun run test:e2e",
     "test:unit": "vitest run",
     "test:api": "playwright test --project=api",
-    "test:e2e": "playwright test --project=e2e"
+    "test:e2e": "playwright test --project=e2e",
+    "screenshots": "playwright test --project=screenshots"
   },
   "dependencies": {
     "@faker-js/faker": "^10.6.0",

@@ -27,6 +27,13 @@ export default defineConfig({
       testMatch: "**/*.spec.ts",
       use: { ...devices["Desktop Chrome"] },
     },
+    // The pictures for the README. Run with `bun run screenshots`, not as part of the tests.
+    {
+      name: "screenshots",
+      testDir: "./tests/screenshots",
+      testMatch: "**/*.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
   webServer: externalUrl
     ? undefined

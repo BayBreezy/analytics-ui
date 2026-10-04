@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["./api/**/*", "./e2e/**/*", "../playwright.config.ts"]
+  "include": ["./api/**/*", "./e2e/**/*", "./screenshots/**/*", "../playwright.config.ts"]
 }
