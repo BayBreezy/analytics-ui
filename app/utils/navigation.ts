@@ -1,6 +1,6 @@
 /**
  * Single source of truth for the admin navigation. This file is plain data and functions (no Vue or
- * Nuxt auto-imports) so `nuxt.config.ts` can import it to register the "coming soon" routes.
+ * Nuxt auto-imports), so it can be imported from anywhere.
  */
 import { RESOURCES } from "../../shared/utils/resources";
 import type { ResourceName } from "../../shared/types/store";
@@ -10,8 +10,6 @@ export interface NavItem {
   url: string;
   icon?: string;
   children?: NavItem[];
-  /** The page is built. Items without this get a "coming soon" placeholder page. */
-  real?: boolean;
 }
 
 export interface NavGroup {
@@ -35,8 +33,8 @@ const resource = (name: ResourceName): NavItem => {
     url: base,
     icon,
     children: [
-      { title: "List", url: base, real: true },
-      { title: "Create", url: `${base}/create`, real: true },
+      { title: "List", url: base },
+      { title: "Create", url: `${base}/create` },
     ],
   };
 };
@@ -46,9 +44,7 @@ export const DASHBOARD_URL = "/dashboard";
 export const mainNav: NavGroup[] = [
   {
     label: "Overview",
-    items: [
-      { title: "Dashboard", url: DASHBOARD_URL, icon: "lucide:layout-dashboard", real: true },
-    ],
+    items: [{ title: "Dashboard", url: DASHBOARD_URL, icon: "lucide:layout-dashboard" }],
   },
   {
     label: "Store",
@@ -62,9 +58,9 @@ export const mainNav: NavGroup[] = [
         url: "/analytics",
         icon: "lucide:chart-pie",
         children: [
-          { title: "Overview", url: "/analytics", real: true },
-          { title: "Statistics", url: "/analytics/statistics", real: true },
-          { title: "Trends", url: "/analytics/trends", real: true },
+          { title: "Overview", url: "/analytics" },
+          { title: "Statistics", url: "/analytics/statistics" },
+          { title: "Trends", url: "/analytics/trends" },
         ],
       },
     ],
@@ -72,15 +68,15 @@ export const mainNav: NavGroup[] = [
 ];
 
 export const secondaryNav: NavItem[] = [
-  { title: "Settings", url: "/settings", icon: "lucide:settings", real: true },
-  { title: "Help", url: "/help", icon: "lucide:circle-help", real: true },
+  { title: "Settings", url: "/settings", icon: "lucide:settings" },
+  { title: "Help", url: "/help", icon: "lucide:circle-help" },
 ];
 
 /** Pages reached from the user menu in the sidebar footer. */
 export const accountNav: NavItem[] = [
-  { title: "Profile", url: "/account/profile", icon: "lucide:user", real: true },
-  { title: "Billing", url: "/account/billing", icon: "lucide:credit-card", real: true },
-  { title: "Team members", url: "/account/team", icon: "lucide:users-round", real: true },
+  { title: "Profile", url: "/account/profile", icon: "lucide:user" },
+  { title: "Billing", url: "/account/billing", icon: "lucide:credit-card" },
+  { title: "Team members", url: "/account/team", icon: "lucide:users-round" },
 ];
 
 /** Every page with an entry in the navigation, flattened, with the parent item if there is one. */
@@ -94,15 +90,6 @@ function flatten() {
   };
   walk([...mainNav.flatMap((group) => group.items), ...secondaryNav, ...accountNav]);
   return entries;
-}
-
-/** Routes that only have a "coming soon" page for now. */
-export function getPlaceholderRoutes() {
-  const seen = new Set<string>();
-  return flatten()
-    .filter(({ item }) => !item.real)
-    .filter(({ item }) => !seen.has(item.url) && seen.add(item.url))
-    .map(({ item, parent }) => ({ path: item.url, title: getTitle(item, parent) }));
 }
 
 function getTitle(item: NavItem, parent?: NavItem) {
