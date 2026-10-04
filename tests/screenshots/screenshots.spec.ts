@@ -53,6 +53,19 @@ test("statistics", async ({ page, app }) => {
   await shot(page, "statistics");
 });
 
+test("billing", async ({ page, app }) => {
+  await app.goto("/account/billing");
+  await settle(page);
+  await shot(page, "billing");
+});
+
+test("team members", async ({ page, app }) => {
+  await app.goto("/account/team");
+  await expect(page.locator("ul.divide-y > li").first()).toBeVisible();
+  await settle(page);
+  await shot(page, "team");
+});
+
 test("command palette", async ({ page, app }) => {
   await app.goto("/orders");
   await expect(page.locator("table tbody tr").first()).toBeVisible();
