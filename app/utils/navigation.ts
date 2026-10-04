@@ -100,6 +100,32 @@ export function visibleNav(items: NavItem[], can: (permission: Permission) => bo
     .map((item) => (item.children ? { ...item, children: visibleNav(item.children, can) } : item));
 }
 
+export interface NavPage {
+  title: string;
+  url: string;
+  icon?: string;
+}
+
+/** Every page the user may open, for the command palette. Parents with sub-pages aren't listed. */
+export function getNavPages(can: (permission: Permission) => boolean): NavPage[] {
+  const pages: NavPage[] = [];
+  const seen = new Set<string>();
+  const walk = (items: NavItem[], parent?: NavItem) => {
+    for (const item of items) {
+      if (item.permission && !can(item.permission)) continue;
+      if (item.children?.length) {
+        walk(item.children, item);
+        continue;
+      }
+      if (seen.has(item.url)) continue;
+      seen.add(item.url);
+      pages.push({ title: getTitle(item, parent), url: item.url, icon: item.icon ?? parent?.icon });
+    }
+  };
+  walk([...mainNav.flatMap((group) => group.items), ...secondaryNav, ...accountNav]);
+  return pages;
+}
+
 /** Every page with an entry in the navigation, flattened, with the parent item if there is one. */
 function flatten() {
   const entries: { item: NavItem; parent?: NavItem }[] = [];

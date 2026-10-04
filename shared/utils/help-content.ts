@@ -145,6 +145,7 @@ export const SHORTCUTS: { group: string; items: Shortcut[] }[] = [
   {
     group: "General",
     items: [
+      { keys: ["Ctrl / ⌘", "K"], description: "Search and run commands (or press /)" },
       { keys: ["Ctrl / ⌘", "B"], description: "Collapse or expand the sidebar" },
       { keys: ["?"], description: "Open these shortcuts" },
     ],

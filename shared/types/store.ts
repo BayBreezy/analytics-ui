@@ -129,6 +129,22 @@ export interface NotificationsResponse {
   unread: number;
 }
 
+/** One match in the command palette's search. */
+export interface SearchHit {
+  id: string;
+  title: string;
+  subtitle: string;
+  /** The record's details page. */
+  href: string;
+}
+
+export interface SearchResults {
+  customers: SearchHit[];
+  orders: SearchHit[];
+  products: SearchHit[];
+  staff: SearchHit[];
+}
+
 /** A device signed in to the account, as listed on the profile page. */
 export interface AccountSession {
   id: string;
