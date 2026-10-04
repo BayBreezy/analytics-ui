@@ -15,6 +15,7 @@ interface Store {
   sessions: AccountSession[];
   tickets: Ticket[];
   notifications: AppNotification[];
+  reminders: Reminder[];
   billing: {
     subscription: Subscription;
     paymentMethods: PaymentMethod[];
@@ -243,6 +244,19 @@ function seed(): Store {
     },
   ];
 
+  const reminderFaker = createMock(61);
+  const reminders: Reminder[] = [
+    { title: "Review pending refunds", time: "9:30 AM", done: true },
+    {
+      title: `Call ${reminderFaker.person.fullName()} about a bulk order`,
+      time: "11:00 AM",
+      done: false,
+    },
+    { title: "Restock low inventory items", time: "1:00 PM", done: false },
+    { title: "Team sync: weekly sales review", time: "2:30 PM", done: false },
+    { title: "Send the promo email to new customers", time: "4:00 PM", done: false },
+  ].map((reminder, index) => ({ id: `rem_${3001 + index}`, ...reminder }));
+
   const notification = (
     index: number,
     type: AppNotification["type"],
@@ -318,6 +332,7 @@ function seed(): Store {
     sessions,
     tickets,
     notifications,
+    reminders,
     billing: {
       subscription: {
         planId: "growth",
@@ -337,6 +352,7 @@ function seed(): Store {
       bill_: 5001 + invoices.length,
       tkt_: 8001 + tickets.length,
       ntf_: 6001 + notifications.length,
+      rem_: 3001 + reminders.length,
     },
   };
 }
@@ -368,6 +384,12 @@ export const withInvitationStatus = (invitation: Invitation): Invitation =>
   invitation.status === "pending" && new Date(invitation.expiresAt).getTime() < Date.now()
     ? { ...invitation, status: "expired" }
     : invitation;
+
+/** Takes the next free number for a reminder. */
+export function nextReminderNumber() {
+  const counters = getStore().counters;
+  return (counters.rem_ = (counters.rem_ ?? 0) + 1) - 1;
+}
 
 /** Takes the next free number for a notification. */
 export function nextNotificationNumber() {
@@ -528,4 +550,17 @@ export function findInvitation(id: string) {
     });
   }
   return invitation;
+}
+
+/** Finds a reminder by id, or throws a 404. */
+export function findReminder(id: string | undefined) {
+  const reminder = getStore().reminders.find((entry) => entry.id === id);
+  if (!reminder) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: `No reminder with id "${id}"`,
+    });
+  }
+  return reminder;
 }

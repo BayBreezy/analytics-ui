@@ -131,6 +131,17 @@ export const ticketSchema = z.object({
     .max(1000, "The message must be 1,000 characters or fewer"),
 });
 
+export const reminderSchema = z.object({
+  title: z
+    .string({ required_error: "Write what you need to do" })
+    .trim()
+    .min(2, "Write what you need to do (at least 2 characters)")
+    .max(100, "Keep it under 100 characters"),
+  /** Display time, e.g. "10:00 AM". Optional. */
+  time: z.string().trim().max(20, "Keep the time short").default(""),
+  done: z.boolean().default(false),
+});
+
 export const resourceSchemas = {
   customers: customerSchema,
   orders: orderSchema,
@@ -156,6 +167,7 @@ export type ProductInput = z.infer<typeof productSchema>;
 export type StaffInput = z.infer<typeof staffSchema>;
 export type OrderInput = z.infer<typeof orderSchema>;
 export type InviteInput = z.infer<typeof inviteSchema>;
+export type ReminderInput = z.infer<typeof reminderSchema>;
 export type TicketInput = z.infer<typeof ticketSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
 export type ListQuery = z.infer<typeof listQuerySchema>;
