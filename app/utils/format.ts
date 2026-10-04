@@ -45,3 +45,11 @@ export const initialsOf = (name = "") =>
     .slice(0, 2)
     .join("")
     .toUpperCase();
+
+export const ORDER_STATUS_VARIANTS = {
+  paid: "success",
+  shipped: "info",
+  pending: "warning",
+  refunded: "secondary",
+  cancelled: "error",
+} as const satisfies Record<OrderStatus, string>;

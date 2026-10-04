@@ -31,16 +31,22 @@
           :alt="row.original.customer.name"
           :fallback="initialsOf(row.original.customer.name)"
           :title="row.original.customer.name"
-          :subtitle="row.original.id"
+          :subtitle="row.original.number"
         />
       </template>
+      <template #items-cell="{ row }">
+        <span>{{ row.original.items[0]?.name }}</span>
+        <span v-if="row.original.items.length > 1" class="text-muted-foreground">
+          +{{ row.original.items.length - 1 }} more
+        </span>
+      </template>
       <template #status-cell="{ row }">
-        <UiBadge :variant="statusVariants[row.original.status]" class="capitalize">
+        <UiBadge :variant="ORDER_STATUS_VARIANTS[row.original.status]" class="capitalize">
           {{ row.original.status }}
         </UiBadge>
       </template>
-      <template #amount-cell="{ row }">
-        <span class="font-medium">{{ formatCurrency(row.original.amount) }}</span>
+      <template #total-cell="{ row }">
+        <span class="font-medium">{{ formatCurrency(row.original.total) }}</span>
       </template>
       <template #createdAt-cell="{ row }">
         <span class="text-muted-foreground">{{ formatRelative(row.original.createdAt) }}</span>
@@ -59,14 +65,6 @@
     server: false,
   });
 
-  const statusVariants = {
-    paid: "success",
-    shipped: "info",
-    pending: "warning",
-    refunded: "secondary",
-    cancelled: "error",
-  } as const satisfies Record<OrderStatus, string>;
-
   const columns: ColumnDef<TanStackTableFeatures, Order>[] = [
     {
       id: "customer",
@@ -75,15 +73,16 @@
       enableSorting: false,
     },
     {
-      accessorKey: "product",
-      header: "Product",
+      id: "items",
+      header: "Items",
+      accessorFn: (row) => row.items[0]?.name ?? "",
       enableSorting: false,
       meta: {
         class: { th: "hidden md:table-cell", td: "hidden max-w-56 truncate md:table-cell" },
       },
     },
     { accessorKey: "status", header: "Status", enableSorting: false },
-    { accessorKey: "amount", header: "Amount", enableSorting: false },
+    { accessorKey: "total", header: "Total", enableSorting: false },
     {
       accessorKey: "createdAt",
       header: "Placed",

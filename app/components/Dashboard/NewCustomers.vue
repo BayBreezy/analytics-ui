@@ -25,7 +25,7 @@
             :subtitle="customer.email"
           />
           <span class="shrink-0 text-xs text-muted-foreground">
-            {{ formatRelative(customer.joinedAt) }}
+            {{ formatRelative(customer.createdAt) }}
           </span>
         </li>
       </ul>

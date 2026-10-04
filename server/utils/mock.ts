@@ -15,12 +15,3 @@ export const daysAgo = (days: number) => hoursAgo(days * 24);
 
 /** Latency for the dashboard endpoints, so skeletons are visible. */
 export const delay = () => sleep(350);
-
-export const PRODUCT_CATEGORIES = [
-  "Electronics",
-  "Clothing",
-  "Home",
-  "Beauty",
-  "Sports",
-  "Books",
-] as const satisfies readonly ProductCategory[];

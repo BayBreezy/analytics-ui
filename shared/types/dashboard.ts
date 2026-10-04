@@ -24,36 +24,6 @@ export interface SalesResponse {
   totals: { revenue: number; orders: number };
 }
 
-export type OrderStatus = "paid" | "pending" | "shipped" | "refunded" | "cancelled";
-
-export interface Order {
-  id: string;
-  customer: { name: string; email: string; avatar: string };
-  product: string;
-  amount: number;
-  status: OrderStatus;
-  createdAt: string;
-}
-
-export type ProductCategory = "Electronics" | "Clothing" | "Home" | "Beauty" | "Sports" | "Books";
-
-export interface Product {
-  id: string;
-  name: string;
-  category: ProductCategory;
-  price: number;
-  stock: number;
-  createdAt: string;
-}
-
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  joinedAt: string;
-}
-
 export type ActivityType = "order" | "customer" | "review" | "refund" | "stock";
 
 export interface Activity {
