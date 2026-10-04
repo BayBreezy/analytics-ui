@@ -1,8 +1,11 @@
 # Analytics UI
 
 [![CI](https://github.com/BayBreezy/analytics-ui/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/BayBreezy/analytics-ui/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-analytics--ui.behonbaker.com-2563eb)](https://analytics-ui.behonbaker.com)
 
 An ecommerce admin dashboard built with **Nuxt 4, UI Thing, Tailwind CSS v4 and TypeScript**. The UI and a typed mock API live in one repo and run on generated data, so there is nothing to set up.
+
+**[Try the live demo](https://analytics-ui.behonbaker.com)**: on the sign-in page, click **Fill demo credentials** to enter as an admin.
 
 ![The dashboard](docs/screenshots/dashboard.jpg)
 

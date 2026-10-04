@@ -1,6 +1,29 @@
 {
   "name": "analytics-ui",
   "private": true,
+  "description": "An ecommerce admin dashboard built with Nuxt 4, UI Thing, Tailwind CSS v4 and TypeScript, with a typed mock API in the same repo.",
+  "keywords": [
+    "admin-dashboard",
+    "dashboard",
+    "ecommerce",
+    "nuxt",
+    "nuxt4",
+    "playwright",
+    "tailwindcss",
+    "typescript",
+    "ui-thing",
+    "vue"
+  ],
+  "homepage": "https://analytics-ui.behonbaker.com",
+  "license": "MIT",
+  "author": {
+    "name": "Behon Baker",
+    "url": "https://behonbaker.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BayBreezy/analytics-ui.git"
+  },
   "type": "module",
   "scripts": {
     "build": "nuxt build",
