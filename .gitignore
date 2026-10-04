@@ -6,6 +6,11 @@
 .cache
 dist
 
+# Test output
+playwright-report
+test-results
+*.tsbuildinfo
+
 # Node dependencies
 node_modules
 
