@@ -7,7 +7,7 @@
         <UiButton variant="outline" size="sm" to="/orders">View all</UiButton>
       </UiCardAction>
     </UiCardHeader>
-    <DashboardError v-if="error" what="orders" class="py-6" @retry="refresh()" />
+    <AppErrorState v-if="error" what="orders" class="py-6" @retry="refresh()" />
     <div v-else-if="!data" class="space-y-4 p-6">
       <div v-for="n in 6" :key="n" class="flex items-center gap-4">
         <UiSkeleton class="size-10 rounded-full" />

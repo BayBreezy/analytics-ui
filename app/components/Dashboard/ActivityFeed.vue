@@ -5,7 +5,7 @@
       <UiCardDescription>What's happening in your store</UiCardDescription>
     </UiCardHeader>
     <UiCardContent>
-      <DashboardError v-if="error" what="activity" @retry="refresh()" />
+      <AppErrorState v-if="error" what="activity" @retry="refresh()" />
       <ul v-else-if="!data" class="space-y-5">
         <li v-for="n in 6" :key="n" class="flex gap-3">
           <UiSkeleton class="size-8 rounded-full" />

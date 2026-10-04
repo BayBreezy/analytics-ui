@@ -2,7 +2,7 @@
   <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
     <template v-if="error">
       <UiCard class="sm:col-span-2 xl:col-span-4">
-        <DashboardError what="stats" @retry="refresh()" />
+        <AppErrorState what="stats" @retry="refresh()" />
       </UiCard>
     </template>
     <template v-else-if="!data">

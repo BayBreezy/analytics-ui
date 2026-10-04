@@ -1,6 +1,10 @@
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { getPlaceholderRoutes } from "./app/utils/navigation";
+import { RESOURCE_NAMES, RESOURCES } from "./shared/utils/resources";
+
+const resourcePage = (view: string) =>
+  fileURLToPath(new URL(`./app/resource-pages/${view}.vue`, import.meta.url));
 
 const comingSoonPage = fileURLToPath(
   new URL("./app/placeholders/coming-soon.vue", import.meta.url)
@@ -21,6 +25,25 @@ export default defineNuxtConfig({
           path,
           file: comingSoonPage,
         });
+      }
+
+      // Customers, orders, products and staff share four generic pages (list, create, details,
+      // edit) that read `meta.resource` to know which resource they are showing.
+      for (const name of RESOURCE_NAMES) {
+        const { base } = RESOURCES[name];
+        for (const [view, path] of [
+          ["list", base],
+          ["create", `${base}/create`],
+          ["details", `${base}/:id`],
+          ["edit", `${base}/:id/edit`],
+        ] as const) {
+          pages.push({
+            name: `${name}-${view}`,
+            path,
+            file: resourcePage(view),
+            meta: { resource: name },
+          });
+        }
       }
     },
   },

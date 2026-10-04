@@ -49,7 +49,7 @@
                   </UiCollapsibleTrigger>
                   <UiCollapsibleContent>
                     <UiSidebarMenuSub>
-                      <UiSidebarMenuSubItem v-for="child in visibleChildren(item)" :key="child.url">
+                      <UiSidebarMenuSubItem v-for="child in item.children" :key="child.url">
                         <UiSidebarMenuSubButton
                           as-child
                           :is-active="isActive(route.path, child.url, true)"

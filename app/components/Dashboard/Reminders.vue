@@ -6,7 +6,7 @@
       <UiCardDescription v-else>Your to-dos for today</UiCardDescription>
     </UiCardHeader>
     <UiCardContent>
-      <DashboardError v-if="error" what="reminders" @retry="refresh()" />
+      <AppErrorState v-if="error" what="reminders" @retry="refresh()" />
       <ul v-else-if="!data" class="space-y-4">
         <li v-for="n in 5" :key="n" class="flex items-center gap-3">
           <UiSkeleton class="size-4" />

@@ -5,7 +5,7 @@
       <UiCardDescription>People who recently joined</UiCardDescription>
     </UiCardHeader>
     <UiCardContent>
-      <DashboardError v-if="error" what="customers" @retry="refresh()" />
+      <AppErrorState v-if="error" what="customers" @retry="refresh()" />
       <ul v-else-if="!data" class="space-y-4">
         <li v-for="n in 6" :key="n" class="flex items-center gap-3">
           <UiSkeleton class="size-10 rounded-full" />

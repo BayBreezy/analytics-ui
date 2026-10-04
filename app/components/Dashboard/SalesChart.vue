@@ -15,7 +15,7 @@
       </UiCardAction>
     </UiCardHeader>
     <UiCardContent>
-      <DashboardError v-if="error" what="sales" @retry="refresh()" />
+      <AppErrorState v-if="error" what="sales" @retry="refresh()" />
       <template v-else>
         <div class="mb-4 flex flex-wrap gap-x-8 gap-y-2">
           <div>

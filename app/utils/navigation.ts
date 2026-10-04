@@ -2,13 +2,16 @@
  * Single source of truth for the admin navigation. This file is plain data and functions (no Vue or
  * Nuxt auto-imports) so `nuxt.config.ts` can import it to register the "coming soon" routes.
  */
+import { RESOURCES } from "../../shared/utils/resources";
+import type { ResourceName } from "../../shared/types/store";
+
 export interface NavItem {
   title: string;
   url: string;
   icon?: string;
   children?: NavItem[];
-  /** Keeps the page and its route but leaves it out of the sidebar menu. */
-  hidden?: boolean;
+  /** The page is built. Items without this get a "coming soon" placeholder page. */
+  real?: boolean;
 }
 
 export interface NavGroup {
@@ -21,37 +24,35 @@ export interface Breadcrumb {
   link?: string;
 }
 
-/** The List / Create / Edit / Delete / Details pages every store resource gets. */
-const resource = (title: string, base: string, icon: string): NavItem => ({
-  title,
-  url: base,
-  icon,
-  children: [
-    { title: "List", url: base },
-    { title: "Create", url: `${base}/create` },
-    // Edit, Delete and Details all need a record, so they're reached from a row on the list page
-    // rather than from the sidebar.
-    { title: "Edit", url: `${base}/edit`, hidden: true },
-    { title: "Delete", url: `${base}/delete`, hidden: true },
-    { title: "Details", url: `${base}/details`, hidden: true },
-  ],
-});
+/**
+ * A store resource gets List and Create entries in the sidebar. Details and Edit need a record, so
+ * they are reached from the rows of the list page instead (see `matchRecordRoute`).
+ */
+const resource = (name: ResourceName): NavItem => {
+  const { plural, base, icon } = RESOURCES[name];
+  return {
+    title: plural,
+    url: base,
+    icon,
+    children: [
+      { title: "List", url: base, real: true },
+      { title: "Create", url: `${base}/create`, real: true },
+    ],
+  };
+};
 
 export const DASHBOARD_URL = "/dashboard";
 
 export const mainNav: NavGroup[] = [
   {
     label: "Overview",
-    items: [{ title: "Dashboard", url: DASHBOARD_URL, icon: "lucide:layout-dashboard" }],
+    items: [
+      { title: "Dashboard", url: DASHBOARD_URL, icon: "lucide:layout-dashboard", real: true },
+    ],
   },
   {
     label: "Store",
-    items: [
-      resource("Customers", "/customers", "lucide:users"),
-      resource("Orders", "/orders", "lucide:shopping-cart"),
-      resource("Products", "/products", "lucide:package"),
-      resource("Staff", "/staff", "lucide:user-cog"),
-    ],
+    items: [resource("customers"), resource("orders"), resource("products"), resource("staff")],
   },
   {
     label: "Insights",
@@ -75,10 +76,6 @@ export const secondaryNav: NavItem[] = [
   { title: "Help", url: "/help", icon: "lucide:circle-help" },
 ];
 
-/** The sub-pages of an item that should appear in the sidebar menu. */
-export const visibleChildren = (item: NavItem) =>
-  item.children?.filter((child) => !child.hidden) ?? [];
-
 /** Pages reached from the user menu in the sidebar footer. */
 export const accountNav: NavItem[] = [
   { title: "Profile", url: "/account/profile", icon: "lucide:user" },
@@ -99,11 +96,11 @@ function flatten() {
   return entries;
 }
 
-/** Routes that only have a "coming soon" page for now (everything except the dashboard). */
+/** Routes that only have a "coming soon" page for now. */
 export function getPlaceholderRoutes() {
   const seen = new Set<string>();
   return flatten()
-    .filter(({ item }) => item.url !== DASHBOARD_URL)
+    .filter(({ item }) => !item.real)
     .filter(({ item }) => !seen.has(item.url) && seen.add(item.url))
     .map(({ item, parent }) => ({ path: item.url, title: getTitle(item, parent) }));
 }
@@ -120,15 +117,40 @@ function find(path: string) {
   return flatten().find(({ item }) => item.url === target);
 }
 
-/** The page title for a path, e.g. "Customers: Create". */
+/** `/customers/cus_1001` and `/customers/cus_1001/edit`: the pages that need a record. */
+export function matchRecordRoute(path: string) {
+  const match = normalize(path).match(/^(\/[^/]+)\/([^/]+)(\/edit)?$/);
+  const name = (Object.keys(RESOURCES) as ResourceName[]).find(
+    (key) => RESOURCES[key].base === match?.[1]
+  );
+  if (!match || !name) return undefined;
+  return { name, id: match[2]!, view: match[3] ? ("edit" as const) : ("details" as const) };
+}
+
+/** The page title for a path, e.g. "Customers: Create" or "Edit customer". */
 export function getPageTitle(path: string) {
   const entry = find(path);
-  return entry ? getTitle(entry.item, entry.parent) : "Page";
+  if (entry) return getTitle(entry.item, entry.parent);
+  const record = matchRecordRoute(path);
+  if (!record) return "Page";
+  const { singular } = RESOURCES[record.name];
+  return record.view === "edit" ? `Edit ${singular.toLowerCase()}` : `${singular} details`;
 }
 
 /** Breadcrumb trail for a path: Dashboard > Section > Page. */
 export function getBreadcrumbs(path: string): Breadcrumb[] {
   const entry = find(path);
+  const record = entry ? undefined : matchRecordRoute(path);
+  if (record) {
+    const { plural, base } = RESOURCES[record.name];
+    const detailsPath = `${base}/${record.id}`;
+    return [
+      { label: "Dashboard", link: DASHBOARD_URL },
+      { label: plural, link: base },
+      record.view === "edit" ? { label: "Details", link: detailsPath } : { label: "Details" },
+      ...(record.view === "edit" ? [{ label: "Edit" }] : []),
+    ];
+  }
   if (!entry || entry.item.url === DASHBOARD_URL) return [{ label: "Dashboard" }];
 
   const trail: Breadcrumb[] = [{ label: "Dashboard", link: DASHBOARD_URL }];
