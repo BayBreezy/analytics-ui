@@ -16,7 +16,7 @@
           }}</template>
         </h1>
       </div>
-      <div v-if="record" class="flex gap-2">
+      <div v-if="record && canWrite" class="flex gap-2">
         <UiButton variant="outline" :to="`${meta.base}/${id}/edit`">
           <Icon name="lucide:pencil" />
           Edit
@@ -62,6 +62,7 @@
   const route = useRoute();
   const resource = route.meta.resource as ResourceName;
   const meta = RESOURCES[resource];
+  const { canWrite } = useResourcePermissions(resource);
   const id = route.params.id as string;
   const Details = useResourceView("Details", resource);
 

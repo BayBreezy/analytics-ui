@@ -1,5 +1,6 @@
 // Newest first. `?status=paid|open|failed` filters the list.
 export default defineEventHandler(async (event): Promise<Invoice[]> => {
+  requirePermission(event, "billing:manage");
   const { status } = validateQuery(event, invoiceQuerySchema);
   await delay();
   const invoices = getStore().billing.invoices;

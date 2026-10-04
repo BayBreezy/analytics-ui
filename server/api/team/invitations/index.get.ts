@@ -5,6 +5,7 @@ const querySchema = z.object({
 });
 
 export default defineEventHandler(async (event): Promise<Invitation[]> => {
+  requirePermission(event, "team:manage");
   const { status } = validateQuery(event, querySchema);
   await delay();
   return getStore()

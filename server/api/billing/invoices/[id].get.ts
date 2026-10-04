@@ -1,5 +1,6 @@
 // A printable invoice. `?download=1` makes the browser save it instead of showing it.
 export default defineEventHandler((event) => {
+  requirePermission(event, "billing:manage");
   const id = getRouterParam(event, "id");
   const invoice = getStore().billing.invoices.find((entry) => entry.id === id);
   if (!invoice) {

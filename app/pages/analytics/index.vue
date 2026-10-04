@@ -65,6 +65,7 @@
 </template>
 
 <script lang="ts" setup>
+  definePageMeta({ permission: "analytics:read" });
   useSeoMeta({ title: "Analytics overview" });
 
   const range = useQueryParam<SalesRange>("range", "30d", ["7d", "30d", "12m"]);

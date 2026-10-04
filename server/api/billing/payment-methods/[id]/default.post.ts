@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event): Promise<BillingOverview> => {
+  requirePermission(event, "billing:manage");
   const id = getRouterParam(event, "id");
   await sleep(400);
 

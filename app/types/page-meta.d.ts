@@ -1,4 +1,5 @@
 import type { ResourceName } from "~~/shared/types/store";
+import type { Permission } from "~~/shared/utils/permissions";
 
 declare module "#app" {
   interface PageMeta {
@@ -6,6 +7,8 @@ declare module "#app" {
     auth?: "guest";
     /** Set on the generic list, create, details and edit pages of a store resource. */
     resource?: ResourceName;
+    /** Roles without this permission are sent to the dashboard. */
+    permission?: Permission;
   }
 }
 

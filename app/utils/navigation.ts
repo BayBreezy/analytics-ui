@@ -1,8 +1,8 @@
 /**
- * Single source of truth for the admin navigation. This file is plain data and functions (no Vue or
- * Nuxt auto-imports), so it can be imported from anywhere.
+ * Single source of truth for the admin navigation: the sidebar, breadcrumbs and page titles are all
+ * built from it.
  */
-import { RESOURCES } from "../../shared/utils/resources";
+import type { Permission } from "../../shared/utils/permissions";
 import type { ResourceName } from "../../shared/types/store";
 
 export interface NavItem {
@@ -10,6 +10,8 @@ export interface NavItem {
   url: string;
   icon?: string;
   children?: NavItem[];
+  /** Roles without this permission don't see the item. */
+  permission?: Permission;
 }
 
 export interface NavGroup {
@@ -32,9 +34,10 @@ const resource = (name: ResourceName): NavItem => {
     title: plural,
     url: base,
     icon,
+    permission: resourcePermission(name, "read"),
     children: [
       { title: "List", url: base },
-      { title: "Create", url: `${base}/create` },
+      { title: "Create", url: `${base}/create`, permission: resourcePermission(name, "write") },
     ],
   };
 };
@@ -57,6 +60,7 @@ export const mainNav: NavGroup[] = [
         title: "Analytics",
         url: "/analytics",
         icon: "lucide:chart-pie",
+        permission: "analytics:read",
         children: [
           { title: "Overview", url: "/analytics" },
           { title: "Statistics", url: "/analytics/statistics" },
@@ -75,9 +79,26 @@ export const secondaryNav: NavItem[] = [
 /** Pages reached from the user menu in the sidebar footer. */
 export const accountNav: NavItem[] = [
   { title: "Profile", url: "/account/profile", icon: "lucide:user" },
-  { title: "Billing", url: "/account/billing", icon: "lucide:credit-card" },
-  { title: "Team members", url: "/account/team", icon: "lucide:users-round" },
+  {
+    title: "Billing",
+    url: "/account/billing",
+    icon: "lucide:credit-card",
+    permission: "billing:manage",
+  },
+  {
+    title: "Team members",
+    url: "/account/team",
+    icon: "lucide:users-round",
+    permission: "team:manage",
+  },
 ];
+
+/** The items a user may see, with the children they may see. */
+export function visibleNav(items: NavItem[], can: (permission: Permission) => boolean): NavItem[] {
+  return items
+    .filter((item) => !item.permission || can(item.permission))
+    .map((item) => (item.children ? { ...item, children: visibleNav(item.children, can) } : item));
+}
 
 /** Every page with an entry in the navigation, flattened, with the parent item if there is one. */
 function flatten() {

@@ -1,6 +1,7 @@
 const WEEK = 7 * 86_400_000;
 
 export default defineEventHandler(async (event): Promise<Invitation> => {
+  requirePermission(event, "team:manage");
   const { email, role, message } = await validateBody(event, inviteSchema);
   await delay();
   const store = getStore();

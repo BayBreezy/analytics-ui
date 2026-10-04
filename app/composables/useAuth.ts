@@ -25,6 +25,8 @@ export const useAuth = () => {
   const session = useState<StoredSession | null>("auth:session", () => sessionCookie.value ?? null);
   const user = computed(() => session.value?.user ?? null);
   const isLoggedIn = computed(() => Boolean(session.value?.user));
+  /** Whether the signed-in user's role may do something (see `shared/utils/permissions.ts`). */
+  const can = (permission: Permission) => hasPermission(session.value?.user?.role, permission);
 
   /** Where to send a user after they sign in: the last page they visited, or the dashboard. */
   const router = useRouter();
@@ -34,7 +36,10 @@ export const useAuth = () => {
     // stale or tampered cookie values
     if (!path || !path.startsWith("/") || path.startsWith("//")) return DEFAULT_REDIRECT;
     const route = router.resolve(path);
-    return route.matched.length > 0 && route.meta.auth !== "guest" ? path : DEFAULT_REDIRECT;
+    const allowed = !route.meta.permission || can(route.meta.permission);
+    return route.matched.length > 0 && route.meta.auth !== "guest" && allowed
+      ? path
+      : DEFAULT_REDIRECT;
   };
 
   const setSession = (value: AuthResponse, remember: boolean) => {
@@ -84,6 +89,7 @@ export const useAuth = () => {
   return {
     user,
     isLoggedIn,
+    can,
     lastVisited,
     getRedirectTarget,
     updateUser,

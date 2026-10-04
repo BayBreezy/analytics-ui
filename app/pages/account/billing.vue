@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts" setup>
+  definePageMeta({ permission: "billing:manage" });
   useSeoMeta({ title: "Billing" });
 
   const {

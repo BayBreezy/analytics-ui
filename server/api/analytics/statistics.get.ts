@@ -1,4 +1,5 @@
-export default defineEventHandler(async (): Promise<AnalyticsStatistics> => {
+export default defineEventHandler(async (event): Promise<AnalyticsStatistics> => {
+  requirePermission(event, "analytics:read");
   await delay();
   const orders = salesOrders();
 

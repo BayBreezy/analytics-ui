@@ -21,7 +21,7 @@
     </UiSidebarHeader>
 
     <UiSidebarContent>
-      <UiSidebarGroup v-for="group in mainNav" :key="group.label">
+      <UiSidebarGroup v-for="group in navGroups" :key="group.label">
         <UiSidebarGroupLabel v-if="group.label" :label="group.label" />
         <UiSidebarGroupContent>
           <UiSidebarMenu>
@@ -141,11 +141,14 @@
                     <span class="truncate font-semibold">{{ user?.name }}</span>
                     <span class="truncate text-xs text-muted-foreground">{{ user?.email }}</span>
                   </div>
+                  <UiBadge v-if="user?.role" variant="secondary" size="sm" class="capitalize">
+                    {{ user.role }}
+                  </UiBadge>
                 </div>
               </UiDropdownMenuLabel>
               <UiDropdownMenuSeparator />
               <UiDropdownMenuGroup>
-                <UiDropdownMenuItem v-for="item in accountNav" :key="item.url" as-child>
+                <UiDropdownMenuItem v-for="item in accountItems" :key="item.url" as-child>
                   <NuxtLink :to="item.url">
                     <Icon v-if="item.icon" :name="item.icon" />
                     {{ item.title }}
@@ -169,9 +172,17 @@
 
 <script lang="ts" setup>
   const route = useRoute();
-  const { user, logout } = useAuth();
+  const { user, logout, can } = useAuth();
   const { settings } = useSettings();
   const { isMobile } = useSidebar();
+
+  // Only the pages the user's role may open are listed.
+  const navGroups = computed(() =>
+    mainNav
+      .map((group) => ({ ...group, items: visibleNav(group.items, can) }))
+      .filter((group) => group.items.length)
+  );
+  const accountItems = computed(() => visibleNav(accountNav, can));
 
   const initials = computed(() =>
     (user.value?.name ?? "")

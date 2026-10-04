@@ -1,4 +1,5 @@
-export default defineEventHandler(async (): Promise<BillingOverview> => {
+export default defineEventHandler(async (event): Promise<BillingOverview> => {
+  requirePermission(event, "billing:manage");
   await sleep(500);
   const { subscription } = getStore().billing;
   if (subscription.status !== "canceling") {

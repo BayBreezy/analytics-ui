@@ -12,17 +12,19 @@
           View
         </NuxtLink>
       </UiDropdownMenuItem>
-      <UiDropdownMenuItem as-child>
-        <NuxtLink :to="`${base}/${id}/edit`">
-          <Icon name="lucide:pencil" />
-          Edit
-        </NuxtLink>
-      </UiDropdownMenuItem>
-      <UiDropdownMenuSeparator />
-      <UiDropdownMenuItem variant="destructive" @select="emit('delete')">
-        <Icon name="lucide:trash-2" />
-        Delete
-      </UiDropdownMenuItem>
+      <template v-if="canWrite">
+        <UiDropdownMenuItem as-child>
+          <NuxtLink :to="`${base}/${id}/edit`">
+            <Icon name="lucide:pencil" />
+            Edit
+          </NuxtLink>
+        </UiDropdownMenuItem>
+        <UiDropdownMenuSeparator />
+        <UiDropdownMenuItem variant="destructive" @select="emit('delete')">
+          <Icon name="lucide:trash-2" />
+          Delete
+        </UiDropdownMenuItem>
+      </template>
     </UiDropdownMenuContent>
   </UiDropdownMenu>
 </template>
@@ -32,4 +34,5 @@
   const emit = defineEmits<{ delete: [] }>();
 
   const base = computed(() => RESOURCES[props.resource].base);
+  const { canWrite } = useResourcePermissions(() => props.resource);
 </script>

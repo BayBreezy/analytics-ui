@@ -51,7 +51,7 @@
             <span class="text-sm text-muted-foreground">Placed</span>
             <span class="text-sm font-medium">{{ formatDate(record.createdAt) }}</span>
           </div>
-          <UiDropdownMenu>
+          <UiDropdownMenu v-if="canWrite">
             <UiDropdownMenuTrigger as-child>
               <UiButton variant="outline" class="w-full" :loading="updating">
                 Update status
@@ -102,6 +102,7 @@
   const props = defineProps<{ record: Order }>();
   const emit = defineEmits<{ changed: [] }>();
 
+  const { canWrite } = useResourcePermissions("orders");
   const updating = ref(false);
   async function updateStatus(status: OrderStatus) {
     updating.value = true;

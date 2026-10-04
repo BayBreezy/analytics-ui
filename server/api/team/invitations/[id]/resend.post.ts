@@ -1,5 +1,6 @@
 // Sends the invitation again with a fresh seven days. Works for pending and expired invitations.
 export default defineEventHandler(async (event): Promise<Invitation> => {
+  requirePermission(event, "team:manage");
   const id = getRouterParam(event, "id")!;
   await delay();
   const invitation = findInvitation(id);

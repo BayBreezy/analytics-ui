@@ -5,6 +5,7 @@ const querySchema = z.object({
 });
 
 export default defineEventHandler(async (event): Promise<AnalyticsOverview> => {
+  requirePermission(event, "analytics:read");
   const { range } = validateQuery(event, querySchema);
   await delay();
 

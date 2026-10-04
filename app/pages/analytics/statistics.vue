@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts" setup>
+  definePageMeta({ permission: "analytics:read" });
   useSeoMeta({ title: "Statistics" });
 
   const { data, error, refresh } = useFetch<AnalyticsStatistics>("/api/analytics/statistics", {

@@ -10,7 +10,7 @@
           <template v-else>&nbsp;</template>
         </p>
       </div>
-      <UiButton :to="`${meta.base}/create`">
+      <UiButton v-if="canWrite" :to="`${meta.base}/create`">
         <Icon name="lucide:plus" />
         New {{ meta.singular.toLowerCase() }}
       </UiButton>
@@ -127,7 +127,9 @@
                   {{
                     list.hasFilters.value
                       ? "Try a different search or clear the filters."
-                      : `Create the first ${meta.singular.toLowerCase()} to get started.`
+                      : canWrite
+                        ? `Create the first ${meta.singular.toLowerCase()} to get started.`
+                        : `There are no ${meta.plural.toLowerCase()} to show.`
                   }}
                 </UiEmptyDescription>
               </UiEmptyHeader>
@@ -139,7 +141,7 @@
                 >
                   Clear filters
                 </UiButton>
-                <UiButton v-else :to="`${meta.base}/create`">
+                <UiButton v-else-if="canWrite" :to="`${meta.base}/create`">
                   <Icon name="lucide:plus" />
                   New {{ meta.singular.toLowerCase() }}
                 </UiButton>
@@ -189,6 +191,7 @@
 
   const slots = useSlots();
   const meta = computed(() => RESOURCES[props.resource]);
+  const { canWrite } = useResourcePermissions(() => props.resource);
   const list = useResourceList(
     props.resource,
     (props.filters ?? []).map((filter) => filter.key)

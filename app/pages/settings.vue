@@ -9,7 +9,7 @@
 
     <UiTabs v-model="tab">
       <UiTabsList class="max-w-full overflow-x-auto">
-        <UiTabsTrigger v-for="item in TABS" :key="item.value" :value="item.value">
+        <UiTabsTrigger v-for="item in tabs" :key="item.value" :value="item.value">
           {{ item.label }}
         </UiTabsTrigger>
       </UiTabsList>
@@ -33,17 +33,22 @@
   useSeoMeta({ title: "Settings" });
 
   const TABS = [
-    { value: "general", label: "General" },
-    { value: "appearance", label: "Appearance" },
-    { value: "notifications", label: "Notifications" },
-    { value: "security", label: "Security" },
-    { value: "data", label: "Data" },
+    { value: "general", label: "General", admin: true },
+    { value: "appearance", label: "Appearance", admin: false },
+    { value: "notifications", label: "Notifications", admin: true },
+    { value: "security", label: "Security", admin: false },
+    { value: "data", label: "Data", admin: true },
   ] as const;
+
+  // The store-wide tabs are for people who may manage settings. Everyone has the per-browser ones.
+  const { can } = useAuth();
+  const canManage = can("settings:manage");
+  const tabs = TABS.filter((item) => canManage || !item.admin);
 
   const tab = useQueryParam<(typeof TABS)[number]["value"]>(
     "tab",
-    "general",
-    TABS.map((item) => item.value)
+    canManage ? "general" : "appearance",
+    tabs.map((item) => item.value)
   );
 
   const { settings, error, refresh } = useSettings();

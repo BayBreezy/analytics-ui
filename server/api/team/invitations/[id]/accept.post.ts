@@ -1,6 +1,7 @@
 // Demo only: pretends the invited person accepted, so the whole invite flow can be tried without email.
 export default defineEventHandler(
   async (event): Promise<{ invitation: Invitation; member: StaffMember }> => {
+    requirePermission(event, "team:manage");
     const id = getRouterParam(event, "id")!;
     await delay();
     const invitation = findInvitation(id);

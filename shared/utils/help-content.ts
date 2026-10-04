@@ -73,7 +73,7 @@ export const FAQ_TOPICS: FaqTopic[] = [
         id: "team-roles",
         question: "What can each role do?",
         answer:
-          "A role says what someone does on your team: admin, manager or support. In this demo roles are labels and don't restrict what anyone can open. You can change a role from the Members tab at any time.",
+          "Admins can do everything. Managers handle customers, orders, products and analytics, and can see the team but not change it. Support staff can see customers and products and work on orders. Change a role from the Members tab at any time. To try a role, sign in with that team member's email (any password).",
       },
       {
         id: "team-admin",

@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
+import { resourcePermission } from "./shared/utils/permissions";
 import { RESOURCE_NAMES, RESOURCES } from "./shared/utils/resources";
 
 const resourcePage = (view: string) =>
@@ -23,11 +24,15 @@ export default defineNuxtConfig({
           ["details", `${base}/:id`],
           ["edit", `${base}/:id/edit`],
         ] as const) {
+          const writes = view === "create" || view === "edit";
           pages.push({
             name: `${name}-${view}`,
             path,
             file: resourcePage(view),
-            meta: { resource: name },
+            meta: {
+              resource: name,
+              permission: resourcePermission(name, writes ? "write" : "read"),
+            },
           });
         }
       }

@@ -1,6 +1,7 @@
 // Changes the plan or the billing period. A plan can't be chosen if the store already uses more
 // than it allows.
 export default defineEventHandler(async (event): Promise<BillingOverview> => {
+  requirePermission(event, "billing:manage");
   const { planId, interval } = await validateBody(event, subscriptionSchema);
   await sleep(600);
 

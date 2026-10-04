@@ -63,6 +63,7 @@
 </template>
 
 <script lang="ts" setup>
+  definePageMeta({ permission: "team:manage" });
   useSeoMeta({ title: "Team members" });
 
   const tab = useQueryParam<"members" | "invitations">("tab", "members", [

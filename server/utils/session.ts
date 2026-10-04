@@ -9,3 +9,23 @@ export function getSessionUser(event: H3Event): AuthUser | undefined {
     return undefined;
   }
 }
+
+/** Throws a 401 without a session and a 403 if the user's role may not do this. */
+export function requirePermission(event: H3Event, permission: Permission): AuthUser {
+  const user = getSessionUser(event);
+  if (!user) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+      message: "Sign in to continue.",
+    });
+  }
+  if (!hasPermission(user.role, permission)) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "Forbidden",
+      message: `Your role (${user.role}) can't do this. Ask an admin for access.`,
+    });
+  }
+  return user;
+}
