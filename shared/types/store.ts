@@ -92,6 +92,17 @@ export interface Invitation {
   expiresAt: string;
 }
 
+/** A device signed in to the account, as listed on the profile page. */
+export interface AccountSession {
+  id: string;
+  device: string;
+  browser: string;
+  location: string;
+  lastActiveAt: string;
+  /** The device the request came from. It can't be signed out from the list. */
+  current: boolean;
+}
+
 export interface ResourceMap {
   customers: Customer;
   orders: Order;

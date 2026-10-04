@@ -1,15 +1,5 @@
 const WEEK = 7 * 86_400_000;
 
-/** The name of the signed-in user, from the session cookie, for "invited by". */
-function currentUserName(event: Parameters<typeof getCookie>[0]) {
-  try {
-    const session = JSON.parse(decodeURIComponent(getCookie(event, "auth-session") ?? ""));
-    return String(session?.user?.name || "Demo User");
-  } catch {
-    return "Demo User";
-  }
-}
-
 export default defineEventHandler(async (event): Promise<Invitation> => {
   const { email, role, message } = await validateBody(event, inviteSchema);
   await delay();
@@ -43,7 +33,7 @@ export default defineEventHandler(async (event): Promise<Invitation> => {
     role,
     status: "pending",
     message,
-    invitedBy: currentUserName(event),
+    invitedBy: getSessionUser(event)?.name || "Demo User",
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + WEEK).toISOString(),
   };

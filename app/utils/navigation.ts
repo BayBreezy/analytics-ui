@@ -78,7 +78,7 @@ export const secondaryNav: NavItem[] = [
 
 /** Pages reached from the user menu in the sidebar footer. */
 export const accountNav: NavItem[] = [
-  { title: "Profile", url: "/account/profile", icon: "lucide:user" },
+  { title: "Profile", url: "/account/profile", icon: "lucide:user", real: true },
   { title: "Billing", url: "/account/billing", icon: "lucide:credit-card" },
   { title: "Team members", url: "/account/team", icon: "lucide:users-round", real: true },
 ];

@@ -11,6 +11,7 @@ interface Store {
   products: Product[];
   staff: StaffMember[];
   invitations: Invitation[];
+  sessions: AccountSession[];
   /** Next number to use for each id prefix. */
   counters: Record<string, number>;
 }
@@ -144,12 +145,27 @@ function seed(): Store {
     invitation(5, staff[5]!.email, staff[5]!.role, "accepted", 40, 0),
   ];
 
+  const sessions: AccountSession[] = [
+    ["MacBook Pro", "Chrome 141", "Austin, United States", 0, true],
+    ["iPhone 16", "Safari 19", "Austin, United States", 5, false],
+    ["Windows desktop", "Edge 141", "Chicago, United States", 52, false],
+    ["iPad Air", "Safari 19", "Toronto, Canada", 190, false],
+  ].map(([device, browser, location, hours, current], index) => ({
+    id: `ses_${9001 + index}`,
+    device: device as string,
+    browser: browser as string,
+    location: location as string,
+    lastActiveAt: hoursAgo(hours as number),
+    current: current as boolean,
+  }));
+
   return {
     customers,
     orders,
     products,
     staff,
     invitations,
+    sessions,
     counters: {
       cus_: 1001 + customers.length,
       prd_: 2001 + products.length,

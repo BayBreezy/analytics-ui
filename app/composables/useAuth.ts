@@ -1,6 +1,9 @@
 const DAY = 60 * 60 * 24;
 const DEFAULT_REDIRECT = "/dashboard";
 
+/** What the cookie holds: the API response plus whether "remember me" was ticked. */
+type StoredSession = AuthResponse & { remember?: boolean };
+
 /**
  * Dummy client-side auth. The session lives in a cookie (so the route middleware can read it during
  * SSR) and is mirrored into `useState` so every component sees changes immediately.
@@ -9,8 +12,8 @@ export const useAuth = () => {
   const cookieOptions = { sameSite: "lax" } as const;
 
   // Same cookie name, two lifetimes: "remember me" persists for 30 days, otherwise it is a browser-session cookie.
-  const sessionCookie = useCookie<AuthResponse | null>("auth-session", cookieOptions);
-  const persistentCookie = useCookie<AuthResponse | null>("auth-session", {
+  const sessionCookie = useCookie<StoredSession | null>("auth-session", cookieOptions);
+  const persistentCookie = useCookie<StoredSession | null>("auth-session", {
     ...cookieOptions,
     maxAge: 30 * DAY,
   });
@@ -19,7 +22,7 @@ export const useAuth = () => {
     maxAge: 30 * DAY,
   });
 
-  const session = useState<AuthResponse | null>("auth:session", () => sessionCookie.value ?? null);
+  const session = useState<StoredSession | null>("auth:session", () => sessionCookie.value ?? null);
   const user = computed(() => session.value?.user ?? null);
   const isLoggedIn = computed(() => Boolean(session.value?.user));
 
@@ -28,16 +31,23 @@ export const useAuth = () => {
   const getRedirectTarget = () => {
     const path = lastVisited.value;
     // Only same-origin, absolute paths that resolve to a real, non-guest page. This also discards
-    // stale or tampered cookie values (e.g. `/sw.js?v0.0.5`).
+    // stale or tampered cookie values
     if (!path || !path.startsWith("/") || path.startsWith("//")) return DEFAULT_REDIRECT;
     const route = router.resolve(path);
     return route.matched.length > 0 && route.meta.auth !== "guest" ? path : DEFAULT_REDIRECT;
   };
 
   const setSession = (value: AuthResponse, remember: boolean) => {
-    session.value = value;
-    if (remember) persistentCookie.value = value;
-    else sessionCookie.value = value;
+    const stored = { ...value, remember };
+    session.value = stored;
+    if (remember) persistentCookie.value = stored;
+    else sessionCookie.value = stored;
+  };
+
+  /** Changes the signed-in user's details (name, avatar, ...) and keeps the cookie's lifetime. */
+  const updateUser = (user: AuthUser) => {
+    if (!session.value) return;
+    setSession({ ...session.value, user }, Boolean(session.value.remember));
   };
 
   const clearSession = () => {
@@ -76,6 +86,7 @@ export const useAuth = () => {
     isLoggedIn,
     lastVisited,
     getRedirectTarget,
+    updateUser,
     login,
     register,
     forgotPassword,
