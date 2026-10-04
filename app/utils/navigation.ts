@@ -72,7 +72,7 @@ export const mainNav: NavGroup[] = [
 ];
 
 export const secondaryNav: NavItem[] = [
-  { title: "Settings", url: "/settings", icon: "lucide:settings" },
+  { title: "Settings", url: "/settings", icon: "lucide:settings", real: true },
   { title: "Help", url: "/help", icon: "lucide:circle-help" },
 ];
 

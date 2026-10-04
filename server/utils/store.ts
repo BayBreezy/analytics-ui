@@ -11,6 +11,7 @@ interface Store {
   products: Product[];
   staff: StaffMember[];
   invitations: Invitation[];
+  settings: Settings;
   sessions: AccountSession[];
   /** Next number to use for each id prefix. */
   counters: Record<string, number>;
@@ -145,6 +146,19 @@ function seed(): Store {
     invitation(5, staff[5]!.email, staff[5]!.role, "accepted", 40, 0),
   ];
 
+  const settings: Settings = {
+    storeName: "Analytics",
+    supportEmail: "support@analytics.test",
+    timezone: "America/New_York",
+    notifications: {
+      newOrder: { email: true, inApp: true },
+      lowStock: { email: true, inApp: true },
+      newCustomer: { email: false, inApp: true },
+      weeklyReport: { email: true, inApp: false },
+      teamInvites: { email: false, inApp: true },
+    },
+  };
+
   const sessions: AccountSession[] = [
     ["MacBook Pro", "Chrome 141", "Austin, United States", 0, true],
     ["iPhone 16", "Safari 19", "Austin, United States", 5, false],
@@ -165,6 +179,7 @@ function seed(): Store {
     products,
     staff,
     invitations,
+    settings,
     sessions,
     counters: {
       cus_: 1001 + customers.length,
@@ -177,6 +192,9 @@ function seed(): Store {
 }
 
 export const getStore = () => (globalStore.__analyticsStore ??= seed());
+
+/** Throws away every change and goes back to the seed data. */
+export const resetStore = () => (globalStore.__analyticsStore = seed());
 
 export const orderTotal = (items: OrderItem[]) =>
   Math.round(items.reduce((sum, item) => sum + item.price * item.quantity, 0) * 100) / 100;

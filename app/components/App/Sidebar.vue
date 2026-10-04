@@ -11,7 +11,7 @@
                 <Icon name="lucide:chart-column" class="size-4" />
               </div>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">Analytics</span>
+                <span class="truncate font-semibold">{{ settings?.storeName ?? "Analytics" }}</span>
                 <span class="truncate text-xs text-muted-foreground">Store admin</span>
               </div>
             </NuxtLink>
@@ -170,6 +170,7 @@
 <script lang="ts" setup>
   const route = useRoute();
   const { user, logout } = useAuth();
+  const { settings } = useSettings();
   const { isMobile } = useSidebar();
 
   const initials = computed(() =>

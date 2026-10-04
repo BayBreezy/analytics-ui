@@ -8,11 +8,12 @@ export function useResourceList<K extends ResourceName>(resource: K, filterKeys:
   const route = useRoute();
   const router = useRouter();
   const text = (value: unknown) => (typeof value === "string" ? value : "");
+  const preferences = usePreferences();
 
   const page = computed(() => Math.max(1, Number.parseInt(text(route.query.page)) || 1));
   const pageSize = computed(() => {
     const size = Number.parseInt(text(route.query.pageSize));
-    return PAGE_SIZES.includes(size) ? size : PAGE_SIZES[0]!;
+    return PAGE_SIZES.includes(size) ? size : preferences.pageSize.value;
   });
   const search = computed(() => text(route.query.search));
   const sort = computed(() => text(route.query.sort) || undefined);
@@ -75,7 +76,10 @@ export function useResourceList<K extends ResourceName>(resource: K, filterKeys:
     searchInput,
     setPage: (value: number) => updateQuery({ page: value === 1 ? undefined : value }),
     setPageSize: (value: number) =>
-      updateQuery({ pageSize: value === PAGE_SIZES[0] ? undefined : value, page: undefined }),
+      updateQuery({
+        pageSize: value === preferences.pageSize.value ? undefined : value,
+        page: undefined,
+      }),
     setSort: (id?: string, direction?: "asc" | "desc") =>
       updateQuery({ sort: id, order: id ? direction : undefined, page: undefined }),
     setFilter: (key: string, value: string) => updateQuery({ [key]: value, page: undefined }),

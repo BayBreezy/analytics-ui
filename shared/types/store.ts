@@ -92,6 +92,26 @@ export interface Invitation {
   expiresAt: string;
 }
 
+export type NotificationEventId =
+  | "newOrder"
+  | "lowStock"
+  | "newCustomer"
+  | "weeklyReport"
+  | "teamInvites";
+
+export interface NotificationChannels {
+  email: boolean;
+  inApp: boolean;
+}
+
+/** Store-wide settings. One record, edited from the Settings page. */
+export interface Settings {
+  storeName: string;
+  supportEmail: string;
+  timezone: string;
+  notifications: Record<NotificationEventId, NotificationChannels>;
+}
+
 /** A device signed in to the account, as listed on the profile page. */
 export interface AccountSession {
   id: string;

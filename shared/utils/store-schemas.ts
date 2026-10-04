@@ -93,6 +93,29 @@ export const inviteSchema = z.object({
   message: z.string().trim().max(300, "The message must be 300 characters or fewer").default(""),
 });
 
+const channels = z.object({ email: z.boolean(), inApp: z.boolean() });
+
+export const settingsSchema = z.object({
+  storeName: z
+    .string({ required_error: "Store name is required" })
+    .trim()
+    .min(2, "Store name must be at least 2 characters")
+    .max(40, "Store name must be 40 characters or fewer"),
+  supportEmail: z
+    .string({ required_error: "Support email is required" })
+    .trim()
+    .min(1, "Support email is required")
+    .email("Enter a valid email address"),
+  timezone: z.enum(TIMEZONES, { errorMap: () => ({ message: "Select a timezone" }) }),
+  notifications: z.object({
+    newOrder: channels,
+    lowStock: channels,
+    newCustomer: channels,
+    weeklyReport: channels,
+    teamInvites: channels,
+  }),
+});
+
 export const resourceSchemas = {
   customers: customerSchema,
   orders: orderSchema,
@@ -118,4 +141,5 @@ export type ProductInput = z.infer<typeof productSchema>;
 export type StaffInput = z.infer<typeof staffSchema>;
 export type OrderInput = z.infer<typeof orderSchema>;
 export type InviteInput = z.infer<typeof inviteSchema>;
+export type SettingsInput = z.infer<typeof settingsSchema>;
 export type ListQuery = z.infer<typeof listQuerySchema>;
