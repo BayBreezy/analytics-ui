@@ -6,12 +6,14 @@
         Throws away every customer, order, product, team change and setting you've made and goes
         back to the original sample data. Your own account and this browser's preferences are kept.
       </UiCardDescription>
+    </UiCardHeader>
+    <UiCardFooter>
       <UiCardAction>
         <UiButton variant="destructive" :loading="resetting" @click="confirming = true">
           Reset demo data
         </UiButton>
       </UiCardAction>
-    </UiCardHeader>
+    </UiCardFooter>
   </UiCard>
 
   <AppConfirmDialog
