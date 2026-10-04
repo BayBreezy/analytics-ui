@@ -112,6 +112,23 @@ export interface Settings {
   notifications: Record<NotificationEventId, NotificationChannels>;
 }
 
+/** Something that happened in the store, shown in the bell in the header. */
+export interface AppNotification {
+  id: string;
+  type: NotificationEventId;
+  title: string;
+  body: string;
+  /** Where clicking the notification goes. */
+  href: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface NotificationsResponse {
+  items: AppNotification[];
+  unread: number;
+}
+
 /** A device signed in to the account, as listed on the profile page. */
 export interface AccountSession {
   id: string;

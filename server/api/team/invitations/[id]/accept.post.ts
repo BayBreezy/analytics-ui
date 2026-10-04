@@ -21,6 +21,11 @@ export default defineEventHandler(
       status: "active",
     });
     invitation.status = "accepted";
+    notify("teamInvites", {
+      title: `${member.name} joined the team`,
+      body: `They accepted their invitation as ${invitation.role}`,
+      href: "/account/team",
+    });
     return { invitation, member };
   }
 );

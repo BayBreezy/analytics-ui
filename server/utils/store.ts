@@ -14,6 +14,7 @@ interface Store {
   settings: Settings;
   sessions: AccountSession[];
   tickets: Ticket[];
+  notifications: AppNotification[];
   billing: {
     subscription: Subscription;
     paymentMethods: PaymentMethod[];
@@ -242,6 +243,71 @@ function seed(): Store {
     },
   ];
 
+  const notification = (
+    index: number,
+    type: AppNotification["type"],
+    title: string,
+    body: string,
+    href: string,
+    hours: number,
+    read: boolean
+  ): AppNotification => ({
+    id: `ntf_${6001 + index}`,
+    type,
+    title,
+    body,
+    href,
+    read,
+    createdAt: hoursAgo(hours),
+  });
+  const notifications: AppNotification[] = [
+    notification(
+      0,
+      "newOrder",
+      `New order ${orders[0]!.number}`,
+      `${orders[0]!.customer.name} placed an order`,
+      `/orders/${orders[0]!.id}`,
+      1.4,
+      false
+    ),
+    notification(
+      1,
+      "lowStock",
+      `Low stock: ${products[3]!.name}`,
+      "Only 4 left",
+      `/products/${products[3]!.id}`,
+      3,
+      false
+    ),
+    notification(
+      2,
+      "newCustomer",
+      `${customers[0]!.name} signed up`,
+      "A new customer account",
+      `/customers/${customers[0]!.id}`,
+      6,
+      false
+    ),
+    notification(
+      3,
+      "weeklyReport",
+      "Your weekly report is ready",
+      "See how sales did last week",
+      "/analytics",
+      30,
+      true
+    ),
+    notification(
+      4,
+      "teamInvites",
+      `${invitations[5]!.email} joined the team`,
+      "They accepted their invitation",
+      "/account/team",
+      52,
+      true
+    ),
+  ];
+
   return {
     customers,
     orders,
@@ -251,6 +317,7 @@ function seed(): Store {
     settings,
     sessions,
     tickets,
+    notifications,
     billing: {
       subscription: {
         planId: "growth",
@@ -269,6 +336,7 @@ function seed(): Store {
       inv_: 7001 + invitations.length,
       bill_: 5001 + invoices.length,
       tkt_: 8001 + tickets.length,
+      ntf_: 6001 + notifications.length,
     },
   };
 }
@@ -300,6 +368,12 @@ export const withInvitationStatus = (invitation: Invitation): Invitation =>
   invitation.status === "pending" && new Date(invitation.expiresAt).getTime() < Date.now()
     ? { ...invitation, status: "expired" }
     : invitation;
+
+/** Takes the next free number for a notification. */
+export function nextNotificationNumber() {
+  const counters = getStore().counters;
+  return (counters.ntf_ = (counters.ntf_ ?? 0) + 1) - 1;
+}
 
 /** Takes the next free number for a support ticket. */
 export function nextTicketNumber() {

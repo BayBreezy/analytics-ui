@@ -49,6 +49,20 @@ function guardLastAdmin(member: StaffMember, change: "remove" | Partial<StaffMem
   }
 }
 
+const money = (value: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+
+/** A product that has just fallen below the low-stock line (or was added already below it). */
+function notifyIfLow(product: Product, before?: Product) {
+  const wasLow = before ? before.stock < LOW_STOCK_BELOW : false;
+  if (product.status !== "active" || product.stock >= LOW_STOCK_BELOW || wasLow) return;
+  notify("lowStock", {
+    title: `Low stock: ${product.name}`,
+    body: product.stock === 0 ? "Out of stock" : `Only ${product.stock} left`,
+    href: `/products/${product.id}`,
+  });
+}
+
 export function createResource<K extends ResourceName>(
   name: K,
   input: Record<string, unknown>
@@ -67,11 +81,17 @@ export function createResource<K extends ResourceName>(
         createdAt,
       };
       store.customers.unshift(record);
+      notify("newCustomer", {
+        title: `${record.name} signed up`,
+        body: "A new customer account",
+        href: `/customers/${record.id}`,
+      });
       break;
     }
     case "products": {
       record = { ...(input as ProductInput), id: `prd_${number}`, createdAt };
       store.products.unshift(record);
+      notifyIfLow(record);
       break;
     }
     case "staff": {
@@ -98,6 +118,11 @@ export function createResource<K extends ResourceName>(
         createdAt,
       };
       store.orders.unshift(record);
+      notify("newOrder", {
+        title: `New order ${record.number}`,
+        body: `${record.customer.name} · ${money(record.total)}`,
+        href: `/orders/${record.id}`,
+      });
       break;
     }
     default:
@@ -140,6 +165,7 @@ export function updateResource<K extends ResourceName>(
   }
 
   collection[index] = next;
+  if (name === "products") notifyIfLow(next as Product, current as Product);
   return getResource(name, id) as ResourceMap[K];
 }
 

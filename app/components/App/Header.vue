@@ -4,6 +4,7 @@
     <UiDivider orientation="vertical" class="mr-2 h-4 w-px" />
     <UiBreadcrumbs :items="breadcrumbs" />
     <div class="ml-auto flex items-center gap-1">
+      <AppNotificationsMenu />
       <ColorModeToggle />
     </div>
   </UiNavbar>
