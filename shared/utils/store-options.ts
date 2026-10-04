@@ -12,6 +12,14 @@ export const STAFF_ROLES = ["admin", "manager", "support"] as const;
 export const STAFF_STATUSES = ["active", "inactive"] as const;
 export const ORDER_STATUSES = ["pending", "paid", "shipped", "refunded", "cancelled"] as const;
 
+/** The status values of each resource, for filters and for changing many records at once. */
+export const RESOURCE_STATUSES = {
+  customers: CUSTOMER_STATUSES,
+  orders: ORDER_STATUSES,
+  products: PRODUCT_STATUSES,
+  staff: STAFF_STATUSES,
+} as const;
+
 export const TICKET_CATEGORIES = ["orders", "billing", "account", "bug", "other"] as const;
 export const TICKET_PRIORITIES = ["low", "normal", "high"] as const;
 

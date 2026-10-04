@@ -85,6 +85,50 @@
         </UiButton>
       </div>
 
+      <div
+        v-if="canWrite && selectedIds.length"
+        role="status"
+        class="flex flex-wrap items-center gap-3 border-b bg-muted/40 px-4 py-2"
+      >
+        <p class="text-sm font-medium">
+          {{ formatNumber(selectedIds.length) }} selected
+          <span class="font-normal text-muted-foreground">on this page</span>
+        </p>
+        <div class="flex flex-wrap items-center gap-2">
+          <UiDropdownMenu>
+            <UiDropdownMenuTrigger as-child>
+              <UiButton variant="outline" size="sm" :disabled="bulkBusy">
+                Set status
+                <Icon name="lucide:chevron-down" />
+              </UiButton>
+            </UiDropdownMenuTrigger>
+            <UiDropdownMenuContent align="start">
+              <UiDropdownMenuItem
+                v-for="status in RESOURCE_STATUSES[resource]"
+                :key="status"
+                class="capitalize"
+                @select="bulkUpdate(status)"
+              >
+                {{ status }}
+              </UiDropdownMenuItem>
+            </UiDropdownMenuContent>
+          </UiDropdownMenu>
+          <UiButton
+            variant="outline"
+            size="sm"
+            class="text-destructive hover:text-destructive"
+            :disabled="bulkBusy"
+            @click="confirmingBulkDelete = true"
+          >
+            <Icon name="lucide:trash-2" />
+            Delete
+          </UiButton>
+          <UiButton variant="ghost" size="sm" :disabled="bulkBusy" @click="clearSelection">
+            Clear
+          </UiButton>
+        </div>
+      </div>
+
       <AppErrorState
         v-if="list.error.value && !list.data.value"
         :what="meta.plural.toLowerCase()"
@@ -107,12 +151,32 @@
           manual-sorting
           :show-footer="false"
           :initial-page-size="100"
-          :table-options="{ enableRowPinning: false }"
+          :table-options="tableOptions"
           class="border-0"
           @update:sorting="onSorting"
         >
           <template v-for="name in cellSlots" :key="name" #[name]="scope">
             <slot :name="name" v-bind="scope" />
+          </template>
+          <template #select-header="{ table }">
+            <UiCheckbox
+              :model-value="
+                table.getIsAllPageRowsSelected()
+                  ? true
+                  : table.getIsSomePageRowsSelected()
+                    ? 'indeterminate'
+                    : false
+              "
+              aria-label="Select all on this page"
+              @update:model-value="table.toggleAllPageRowsSelected(Boolean($event))"
+            />
+          </template>
+          <template #select-cell="{ row }">
+            <UiCheckbox
+              :model-value="row.getIsSelected()"
+              :aria-label="`Select ${getRecordLabel(resource, row.original)}`"
+              @update:model-value="row.toggleSelected(Boolean($event))"
+            />
           </template>
           <template #actions-cell="{ row }">
             <div class="flex justify-end">
@@ -172,6 +236,16 @@
       </template>
     </UiCard>
 
+    <AppConfirmDialog
+      :open="confirmingBulkDelete"
+      :title="`Delete ${selectedIds.length} ${(selectedIds.length === 1 ? meta.singular : meta.plural).toLowerCase()}?`"
+      description="They will be removed for good. This can't be undone."
+      confirm-label="Delete"
+      destructive
+      @close="confirmingBulkDelete = false"
+      @confirm="bulkDelete"
+    />
+
     <ResourceDeleteDialog
       :resource="resource"
       :record="deleting"
@@ -212,6 +286,17 @@
   // The per-resource list supplies the data columns and their cell slots. The row actions column is
   // added here so it is the same everywhere.
   const allColumns = computed(() => [
+    // A checkbox column, for people who may change records.
+    ...(canWrite.value
+      ? [
+          {
+            id: "select",
+            header: "",
+            enableSorting: false,
+            meta: { class: { th: "w-10", td: "w-10" } },
+          } as ColumnDef<TanStackTableFeatures, any>,
+        ]
+      : []),
     ...props.columns,
     { id: "actions", header: "", enableSorting: false } as ColumnDef<TanStackTableFeatures, any>,
   ]);
@@ -241,6 +326,71 @@
     const params = new URLSearchParams(rest as Record<string, string>);
     return `/api/${props.resource}/export?${params}`;
   });
+
+  // ---- Selecting rows and changing them together
+  const tableOptions = {
+    enableRowPinning: false,
+    enableRowSelection: true,
+    // Selected rows are tracked by record id, not by position.
+    getRowId: (row: any) => String(row.id),
+  };
+  const selectedIds = computed(() =>
+    Object.entries((tableRef.value?.rowSelection ?? {}) as Record<string, boolean>)
+      .filter(([, selected]) => selected)
+      .map(([id]) => id)
+  );
+  const clearSelection = () => {
+    if (tableRef.value) tableRef.value.rowSelection = {};
+  };
+  // A different page, search, filter, sort or fresh data means a different set of rows.
+  watch(() => list.data.value, clearSelection);
+
+  const bulkBusy = ref(false);
+  const confirmingBulkDelete = ref(false);
+
+  async function bulk(body: { action: "delete" | "update"; status?: string }) {
+    const ids = selectedIds.value;
+    bulkBusy.value = true;
+    try {
+      const result = await $fetch<BulkResult>(`/api/${props.resource}/bulk` as string, {
+        method: "POST",
+        body: { ...body, ids },
+      });
+      const noun = (count: number) =>
+        `${formatNumber(count)} ${(count === 1 ? meta.value.singular : meta.value.plural).toLowerCase()}`;
+      const verb = body.action === "delete" ? "Deleted" : "Updated";
+      if (!result.failed.length) {
+        useSonner(`${verb} ${noun(result.done)}`);
+      } else {
+        const reasons = [...new Set(result.failed.map((item) => item.message))].slice(0, 3);
+        const options = { description: reasons.join(" ") };
+        if (result.done) {
+          useSonner.warning(`${verb} ${result.done} of ${ids.length}`, options);
+        } else {
+          useSonner.error(
+            `Couldn't ${body.action === "delete" ? "delete" : "update"} any`,
+            options
+          );
+        }
+      }
+      clearSelection();
+      // Deleting every row of the last page would leave an empty page, so step back.
+      if (body.action === "delete" && result.done >= (list.data.value?.items.length ?? 0)) {
+        if (list.page.value > 1) return list.setPage(list.page.value - 1);
+      }
+      await list.refresh();
+    } catch (error) {
+      useSonner.error("Couldn't change the selected rows", { description: getErrorMessage(error) });
+    } finally {
+      bulkBusy.value = false;
+    }
+  }
+
+  const bulkUpdate = (status: string) => bulk({ action: "update", status });
+  const bulkDelete = () => {
+    confirmingBulkDelete.value = false;
+    return bulk({ action: "delete" });
+  };
 
   const deleting = ref<{ id: string; label: string } | null>(null);
   function onDeleted() {

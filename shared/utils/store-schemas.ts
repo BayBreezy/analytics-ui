@@ -142,6 +142,18 @@ export const reminderSchema = z.object({
   done: z.boolean().default(false),
 });
 
+/** Delete or change the status of up to 100 records at once. */
+export const bulkSchema = z.object({
+  action: z.enum(["delete", "update"], { errorMap: () => ({ message: "Choose an action" }) }),
+  ids: z
+    .array(z.string().min(1))
+    .min(1, "Select at least one record")
+    .max(100, "Select 100 records or fewer")
+    .refine((ids) => new Set(ids).size === ids.length, "Each record can only be listed once"),
+  /** The new status, for `update`. */
+  status: z.string().optional(),
+});
+
 export const resourceSchemas = {
   customers: customerSchema,
   orders: orderSchema,
@@ -171,6 +183,7 @@ export type StaffInput = z.infer<typeof staffSchema>;
 export type OrderInput = z.infer<typeof orderSchema>;
 export type InviteInput = z.infer<typeof inviteSchema>;
 export type ReminderInput = z.infer<typeof reminderSchema>;
+export type BulkInput = z.infer<typeof bulkSchema>;
 export type TicketInput = z.infer<typeof ticketSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
 export type ListQuery = z.infer<typeof listQuerySchema>;

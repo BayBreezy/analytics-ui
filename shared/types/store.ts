@@ -129,6 +129,12 @@ export interface NotificationsResponse {
   unread: number;
 }
 
+/** What a bulk delete or update did: how many worked, and why the others didn't. */
+export interface BulkResult {
+  done: number;
+  failed: { id: string; message: string }[];
+}
+
 /** One match in the command palette's search. */
 export interface SearchHit {
   id: string;
