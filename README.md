@@ -29,11 +29,23 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 - **User menu** in the sidebar footer, with Profile, Billing, Team members and Log out.
 - **"Coming soon" pages.** Every sidebar link has a real URL. Only the dashboard is built so far, so the rest show a placeholder page. Edit, Delete and Details have pages (for example `/customers/edit`, `/customers/delete` and `/customers/details`, and the same for orders, products and staff) but no sidebar link, because they need a record. They will be reached from the rows of each list page. Unknown URLs still return a 404.
 
+### Dashboard
+
+An ecommerce overview at `/dashboard`, with loading skeletons and a retry button if a widget fails to load:
+
+- **Metric cards:** total revenue, orders, new customers and average order value, each with the change versus the previous period.
+- **Sales overview:** an ApexCharts revenue and orders chart with a 7 days / 30 days / 12 months switcher. It follows the light and dark theme.
+- **Recent orders** in a TanStack Table, with customer, product, status badge, amount and time.
+- **New customers**, **recent activity** (orders, sign-ups, reviews, refunds, low stock) and **recently added products** with stock status.
+- **Reminders** you can check off. Check marks are not saved yet.
+
 ### Mock API
 
 All data is generated with faker, so there is no database.
 
 - `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/auth-schemas.ts`).
+- `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m`, `orders`, `products`, `customers` (each with an optional `limit`), `activity` and `reminders`. Invalid query values return a 400.
+- The dashboard data is seeded, so it looks the same on every load. Responses include a short artificial delay so the loading states are visible.
 
 ### General
 
@@ -44,7 +56,7 @@ All data is generated with faker, so there is no database.
 
 - [x] **Authentication**: login, register, forgot password, route protection, idle sign-out
 - [x] **Dashboard shell**: sidebar, header, profile menu and navigation
-- [ ] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
+- [x] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
 - [ ] **Real pages for the sidebar links**: customers, orders, products, staff, analytics, settings (currently "coming soon" pages)
 
 ## Tech stack
@@ -53,6 +65,7 @@ All data is generated with faker, so there is no database.
 - [UI Thing](https://uithing.com) components (Reka UI, tailwind-variants), [Tailwind CSS v4](https://tailwindcss.com)
 - [vee-validate](https://vee-validate.logaretm.com) + [zod](https://zod.dev) for forms
 - [VueUse](https://vueuse.org) (`useIdle` and others), [vue-sonner](https://vue-sonner.vercel.app) for toasts
+- [ApexCharts](https://apexcharts.com) and [TanStack Table](https://tanstack.com/table) (UI Thing components) for charts and tables
 - [@faker-js/faker](https://fakerjs.dev) for mock data
 - [oxlint](https://oxc.rs/docs/guide/usage/linter) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter) for linting and formatting
 
@@ -88,6 +101,7 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 app/
   components/
     App/             Sidebar and header for the admin layout
+    Dashboard/       Dashboard widgets (stat cards, sales chart, tables, feeds)
     Ui/              UI Thing components (generated, safe to edit)
   composables/       useAuth: session, login, register, logout
   layouts/           auth (centered card) and default (admin layout with sidebar)
@@ -98,6 +112,7 @@ app/
   utils/             navigation.ts (sidebar links and routes), format helpers
 server/
   api/auth/          mock auth endpoints
+  api/dashboard/     mock dashboard data
   utils/             faker helpers, seeded mock data and request validation
 shared/              zod schemas and types used by both the app and the server
 ```

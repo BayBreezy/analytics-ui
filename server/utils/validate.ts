@@ -21,3 +21,17 @@ export async function validateBody<T extends z.ZodTypeAny>(
 
 /** Simulates network latency so loading states are visible in the UI. */
 export const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Validates the query string with a zod schema, throwing a 400 with field errors. */
+export function validateQuery<T extends z.ZodTypeAny>(event: H3Event, schema: T): z.infer<T> {
+  const result = schema.safeParse(getQuery(event));
+  if (!result.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Validation Error",
+      message: result.error.issues[0]?.message ?? "Invalid query",
+      data: result.error.flatten().fieldErrors,
+    });
+  }
+  return result.data;
+}

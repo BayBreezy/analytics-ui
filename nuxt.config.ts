@@ -83,5 +83,19 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    // Pre-bundle these at startup. Otherwise Vite discovers them on the first page load, re-optimizes
+    // and reloads modules mid-render, which logs a one-time "Cannot read properties of null" error.
+    optimizeDeps: {
+      include: [
+        "@tanstack/vue-table",
+        "@vee-validate/zod",
+        "culori",
+        "lodash-es",
+        "reka-ui",
+        "tailwind-variants",
+        "vue3-apexcharts",
+        "zod",
+      ],
+    },
   },
 });

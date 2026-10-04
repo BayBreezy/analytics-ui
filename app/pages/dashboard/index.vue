@@ -1,43 +1,34 @@
 <template>
-  <div class="mx-auto max-w-2xl px-5 py-16">
-    <UiCard>
-      <UiCardHeader>
-        <div class="flex items-center gap-4">
-          <UiAvatar class="size-12">
-            <UiAvatarImage v-if="user?.avatar" :src="user.avatar" :alt="user.name" />
-            <UiAvatarFallback>{{ initials }}</UiAvatarFallback>
-          </UiAvatar>
-          <div>
-            <UiCardTitle>{{ user?.name }}</UiCardTitle>
-            <UiCardDescription>{{ user?.email }}</UiCardDescription>
-          </div>
-        </div>
-      </UiCardHeader>
-      <UiCardContent class="text-sm text-muted-foreground">
-        Auth is working. The real dashboard (sidebar, charts, tables) arrives in the next phase.
-      </UiCardContent>
-      <UiCardFooter class="gap-2">
-        <UiButton variant="outline" @click="logout">
-          <Icon name="lucide:log-out" />
-          Sign out
-        </UiButton>
-        <ColorModeToggle />
-      </UiCardFooter>
-    </UiCard>
+  <div class="space-y-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Welcome back, {{ firstName }}</h1>
+      <p class="mt-1 text-sm text-muted-foreground">
+        Here's what's happening with your store today.
+      </p>
+    </div>
+
+    <DashboardStats />
+
+    <div class="grid gap-6 *:min-w-0 lg:grid-cols-3">
+      <div class="lg:col-span-2"><DashboardSalesChart /></div>
+      <DashboardNewCustomers />
+    </div>
+
+    <div class="grid gap-6 *:min-w-0 lg:grid-cols-3">
+      <div class="lg:col-span-2"><DashboardRecentOrders /></div>
+      <DashboardActivityFeed />
+    </div>
+
+    <div class="grid gap-6 *:min-w-0 lg:grid-cols-3">
+      <div class="lg:col-span-2"><DashboardRecentProducts /></div>
+      <DashboardReminders />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
   useSeoMeta({ title: "Dashboard" });
 
-  const { user, logout } = useAuth();
-
-  const initials = computed(() =>
-    (user.value?.name ?? "")
-      .split(" ")
-      .map((part) => part[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase()
-  );
+  const { user } = useAuth();
+  const firstName = computed(() => user.value?.name.split(" ")[0] ?? "there");
 </script>
