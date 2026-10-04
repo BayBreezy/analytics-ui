@@ -87,7 +87,6 @@
             <UiSidebarMenuItem v-for="item in secondaryNav" :key="item.url">
               <UiSidebarMenuButton
                 as-child
-                size="sm"
                 :tooltip="item.title"
                 :is-active="isActive(route.path, item.url)"
               >
