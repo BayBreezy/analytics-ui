@@ -76,7 +76,10 @@
     required?: boolean;
   }>();
 
-  const inputId = props.id || useId();
+  // Edited from the UI Thing original: an id built from the field name. `useId()` can give the server
+  // and the browser different ids, and a select with `v-model` takes the browser's, which leaves its
+  // label pointing at an id that no longer exists.
+  const inputId = props.id || (props.name ? `select-${props.name}` : useId());
 
   const hasIcon = computed(() => Boolean(props.icon) || Boolean(useSlots().icon));
 
