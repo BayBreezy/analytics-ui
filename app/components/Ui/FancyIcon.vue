@@ -62,6 +62,10 @@
         warning: "",
         success: "",
         info: "",
+        // Added beyond the UI Thing original, so categories can each have their own colour.
+        purple: "",
+        pink: "",
+        teal: "",
       },
     },
 
@@ -104,6 +108,21 @@
         color: "info",
         class: "bg-blue-500/10 text-blue-500 dark:bg-blue-500 dark:text-white",
       },
+      {
+        theme: "light",
+        color: "purple",
+        class: "bg-purple-500/10 text-purple-500 dark:bg-purple-500 dark:text-white",
+      },
+      {
+        theme: "light",
+        color: "pink",
+        class: "bg-pink-500/10 text-pink-500 dark:bg-pink-500 dark:text-white",
+      },
+      {
+        theme: "light",
+        color: "teal",
+        class: "bg-teal-500/10 text-teal-500 dark:bg-teal-500 dark:text-white",
+      },
       // Gradient sizes
       { theme: "gradient", size: "sm", class: "size-8 after:size-6 [*>svg]:size-4" },
       { theme: "gradient", size: "md", class: "size-10 after:size-7 [*>svg]:size-4" },
@@ -142,6 +161,21 @@
         color: "info",
         class: "before:border-blue-800/20 before:bg-blue-500/10 after:bg-blue-500",
       },
+      {
+        theme: "gradient",
+        color: "purple",
+        class: "before:border-purple-800/20 before:bg-purple-500/10 after:bg-purple-500",
+      },
+      {
+        theme: "gradient",
+        color: "pink",
+        class: "before:border-pink-800/20 before:bg-pink-500/10 after:bg-pink-500",
+      },
+      {
+        theme: "gradient",
+        color: "teal",
+        class: "before:border-teal-800/20 before:bg-teal-500/10 after:bg-teal-500",
+      },
       // Dark sizes
       { theme: "dark", size: "sm", class: "size-8 rounded-md before:rounded-[5px]" },
       { theme: "dark", size: "md", class: "size-10 rounded-lg before:rounded-[7px]" },
@@ -170,6 +204,9 @@
         color: "info",
         class: "bg-blue-500 before:border-blue-800/12",
       },
+      { theme: "dark", color: "purple", class: "bg-purple-500 before:border-purple-800/12" },
+      { theme: "dark", color: "pink", class: "bg-pink-500 before:border-pink-800/12" },
+      { theme: "dark", color: "teal", class: "bg-teal-500 before:border-teal-800/12" },
       // Modern sizes
       { theme: "modern", size: "sm", class: "size-8 rounded-md" },
       { theme: "modern", size: "md", class: "size-10 rounded-lg" },

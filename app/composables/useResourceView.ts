@@ -5,12 +5,15 @@ type Loader = () => Promise<{ default: Component }>;
 const views: Record<"List" | "Form" | "Details", Partial<Record<ResourceName, Loader>>> = {
   List: {
     customers: (() => import("../components/Customers/List.vue")) as Loader,
+    products: (() => import("../components/Products/List.vue")) as Loader,
   },
   Form: {
     customers: (() => import("../components/Customers/Form.vue")) as Loader,
+    products: (() => import("../components/Products/Form.vue")) as Loader,
   },
   Details: {
     customers: (() => import("../components/Customers/Details.vue")) as Loader,
+    products: (() => import("../components/Products/Details.vue")) as Loader,
   },
 };
 

@@ -46,6 +46,31 @@ export const initialsOf = (name = "") =>
     .join("")
     .toUpperCase();
 
+export const PRODUCT_CATEGORY_ICONS: Record<ProductCategory, string> = {
+  Electronics: "lucide:headphones",
+  Clothing: "lucide:shirt",
+  Home: "lucide:armchair",
+  Beauty: "lucide:sparkles",
+  Sports: "lucide:dumbbell",
+  Books: "lucide:book-open",
+};
+
+/** Each category gets its own colour for its icon. */
+export const PRODUCT_CATEGORY_COLORS = {
+  Electronics: "info",
+  Clothing: "purple",
+  Home: "success",
+  Beauty: "pink",
+  Sports: "warning",
+  Books: "teal",
+} as const satisfies Record<ProductCategory, string>;
+
+export const PRODUCT_STATUS_VARIANTS = {
+  active: "success",
+  draft: "secondary",
+  archived: "outline",
+} as const satisfies Record<ProductStatus, string>;
+
 export const ORDER_STATUS_VARIANTS = {
   paid: "success",
   shipped: "info",

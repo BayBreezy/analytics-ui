@@ -28,7 +28,7 @@
           <div
             class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"
           >
-            <Icon :name="categoryIcons[product.category]" class="size-5" />
+            <Icon :name="PRODUCT_CATEGORY_ICONS[product.category]" class="size-5" />
           </div>
           <div class="min-w-0 flex-1">
             <p class="truncate text-sm font-medium">{{ product.name }}</p>
@@ -58,13 +58,4 @@
     query: { limit: 5 },
     server: false,
   });
-
-  const categoryIcons: Record<ProductCategory, string> = {
-    Electronics: "lucide:headphones",
-    Clothing: "lucide:shirt",
-    Home: "lucide:armchair",
-    Beauty: "lucide:sparkles",
-    Sports: "lucide:dumbbell",
-    Books: "lucide:book-open",
-  };
 </script>
