@@ -4,7 +4,15 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
-  modules: ["@nuxtjs/color-mode", "motion-v/nuxt", "@vueuse/nuxt", "@nuxt/icon", "@nuxt/fonts"],
+  modules: [
+    "@nuxtjs/color-mode",
+    "motion-v/nuxt",
+    "@vueuse/nuxt",
+    "@nuxt/icon",
+    "@nuxt/fonts",
+    "@vee-validate/nuxt",
+    "vue-sonner/nuxt",
+  ],
 
   imports: {
     imports: [
@@ -17,7 +25,20 @@ export default defineNuxtConfig({
         name: "VariantProps",
         type: true,
       },
+      {
+        from: "vue-sonner",
+        name: "toast",
+        as: "useSonner",
+      },
     ],
+  },
+
+  runtimeConfig: {
+    public: {
+      // Signed-in users are logged out after this much inactivity. Override with
+      // NUXT_PUBLIC_IDLE_TIMEOUT_MS.
+      idleTimeoutMs: 5 * 60 * 1000,
+    },
   },
 
   colorMode: {

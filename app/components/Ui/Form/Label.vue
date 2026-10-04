@@ -1,0 +1,35 @@
+<template>
+  <Label
+    :class="styles({ error: Boolean(error), class: normalizeClass(props.class) || undefined })"
+    :for="formItemId"
+    v-bind="$attrs"
+  >
+    <slot
+      >{{ label }}
+      <span class="text-muted-foreground/80 ml-auto font-normal">{{ hint }}</span></slot
+    >
+  </Label>
+</template>
+
+<script lang="ts" setup>
+  import { Label } from "reka-ui";
+  import type { LabelProps } from "reka-ui";
+  import { normalizeClass } from "vue";
+  import type { HTMLAttributes } from "vue";
+
+  defineOptions({ inheritAttrs: false });
+  const props = defineProps<
+    LabelProps & { class?: HTMLAttributes["class"]; label?: string; hint?: string }
+  >();
+
+  const { error, formItemId } = useFormField();
+
+  const styles = tv({
+    base: "text-foreground flex w-full items-center justify-between text-left text-sm font-medium tracking-tight hover:cursor-pointer",
+    variants: {
+      error: {
+        true: "text-destructive",
+      },
+    },
+  });
+</script>
