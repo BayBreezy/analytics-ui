@@ -10,6 +10,8 @@ const relative = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 export const formatCurrency = (value: number, whole = false) =>
   (whole ? currencyWhole : currency).format(value);
 
+export const formatPercent = (value: number) => `${value.toFixed(1)}%`;
+
 export const formatNumber = (value: number) => number.format(value);
 
 /** "1.2k" style axis labels. */
@@ -78,3 +80,40 @@ export const ORDER_STATUS_VARIANTS = {
   refunded: "secondary",
   cancelled: "error",
 } as const satisfies Record<OrderStatus, string>;
+
+/** Axis label for a point of a sales series: weekday for 7 days, date for 30 days, month for 12 months. */
+export const rangeLabelFormatter = (range: SalesRange) =>
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    ...(range === "12m"
+      ? { month: "short" }
+      : range === "7d"
+        ? { weekday: "short" }
+        : { month: "short", day: "numeric" }),
+  });
+
+export const RANGE_OPTIONS: { value: SalesRange; label: string; short: string }[] = [
+  { value: "7d", label: "7 days", short: "7D" },
+  { value: "30d", label: "30 days", short: "30D" },
+  { value: "12m", label: "12 months", short: "12M" },
+];
+
+export const METRIC_OPTIONS: { value: AnalyticsMetric; label: string; short: string }[] = [
+  { value: "revenue", label: "Revenue", short: "Revenue" },
+  { value: "orders", label: "Orders", short: "Orders" },
+  { value: "customers", label: "New customers", short: "Customers" },
+  { value: "averageOrder", label: "Average order", short: "Avg. order" },
+];
+
+/** A metric value for display: dollars for revenue and average order, a plain number otherwise. */
+export const formatMetric = (metric: AnalyticsMetric, value: number) =>
+  metric === "revenue" || metric === "averageOrder"
+    ? formatCurrency(value, metric === "revenue" && value >= 1000)
+    : formatNumber(Math.round(value));
+
+/** A point's date as text: "Sep 29" for days, "Sep 2026" for months. */
+export const formatPeriod = (iso: string, range: SalesRange) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    ...(range === "12m" ? { month: "short", year: "numeric" } : { month: "short", day: "numeric" }),
+  });

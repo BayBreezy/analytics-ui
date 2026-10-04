@@ -19,33 +19,50 @@
           <span class="text-muted-foreground">{{ stat.caption }}</span>
         </div>
       </div>
-      <UiFancyIcon :icon="icon" :color="color" theme="gradient" size="lg" />
+      <UiFancyIcon :icon="iconName" :color="iconColor" theme="gradient" size="lg" />
     </UiCardContent>
   </UiCard>
 </template>
 
 <script lang="ts" setup>
-  const props = defineProps<{ stat: StatCard }>();
+  type IconColor =
+    | "success"
+    | "primary"
+    | "info"
+    | "warning"
+    | "error"
+    | "purple"
+    | "pink"
+    | "teal";
 
-  const icons: Record<StatCard["id"], string> = {
+  const props = defineProps<{
+    stat: StatCard;
+    /** Overrides the icon chosen from the stat's id. */
+    icon?: string;
+    /** Overrides the icon color chosen from the stat's id. */
+    color?: IconColor;
+  }>();
+
+  const icons: Record<string, string> = {
     revenue: "lucide:dollar-sign",
     orders: "lucide:shopping-bag",
     customers: "lucide:user-plus",
     averageOrder: "lucide:receipt",
   };
 
-  const colors: Record<StatCard["id"], "success" | "primary" | "info" | "warning"> = {
+  const colors: Record<string, IconColor> = {
     revenue: "success",
     orders: "primary",
     customers: "info",
     averageOrder: "warning",
   };
 
-  const icon = computed(() => icons[props.stat.id]);
-  const color = computed(() => colors[props.stat.id]);
-  const value = computed(() =>
-    props.stat.format === "currency"
-      ? formatCurrency(props.stat.value, props.stat.value >= 1000)
-      : formatNumber(props.stat.value)
-  );
+  const iconName = computed(() => props.icon ?? icons[props.stat.id] ?? "lucide:chart-column");
+  const iconColor = computed(() => props.color ?? colors[props.stat.id] ?? "primary");
+  const value = computed(() => {
+    if (props.stat.format === "currency")
+      return formatCurrency(props.stat.value, props.stat.value >= 1000);
+    if (props.stat.format === "percent") return formatPercent(props.stat.value);
+    return formatNumber(props.stat.value);
+  });
 </script>

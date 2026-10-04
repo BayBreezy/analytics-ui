@@ -1,10 +1,10 @@
 export type SalesRange = "7d" | "30d" | "12m";
 
 export interface StatCard {
-  id: "revenue" | "orders" | "customers" | "averageOrder";
+  id: string;
   label: string;
   value: number;
-  format: "currency" | "number";
+  format: "currency" | "number" | "percent";
   /** Change versus the previous period, in percent. */
   changePercent: number;
   trend: "up" | "down";

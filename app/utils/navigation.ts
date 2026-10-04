@@ -62,9 +62,9 @@ export const mainNav: NavGroup[] = [
         url: "/analytics",
         icon: "lucide:chart-pie",
         children: [
-          { title: "Overview", url: "/analytics" },
-          { title: "Statistics", url: "/analytics/statistics" },
-          { title: "Trends", url: "/analytics/trends" },
+          { title: "Overview", url: "/analytics", real: true },
+          { title: "Statistics", url: "/analytics/statistics", real: true },
+          { title: "Trends", url: "/analytics/trends", real: true },
         ],
       },
     ],

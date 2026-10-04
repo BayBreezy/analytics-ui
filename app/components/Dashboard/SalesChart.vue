@@ -44,7 +44,6 @@
 
 <script lang="ts" setup>
   import type { ApexOptions } from "apexcharts";
-  import { formatHex } from "culori";
 
   const ranges: { value: SalesRange; label: string; short: string }[] = [
     { value: "7d", label: "7 days", short: "7D" },
@@ -59,25 +58,8 @@
     server: false,
   });
 
-  // Apex needs real color values for series and gradients, so read the theme's `--chart-N` CSS
-  // variables (oklch) and convert them to hex. They are read again whenever the color mode changes.
-  const colorMode = useColorMode();
+  const colors = useChartColors();
   const isNarrow = useMediaQuery("(max-width: 640px)");
-  const fallbackColors = ["#3b82f6", "#10b981"];
-  const colors = ref(fallbackColors);
-
-  function readThemeColors() {
-    const style = getComputedStyle(document.documentElement);
-    colors.value = ["--chart-1", "--chart-2"].map(
-      (name, index) => formatHex(style.getPropertyValue(name).trim()) ?? fallbackColors[index]!
-    );
-  }
-
-  onMounted(readThemeColors);
-  watch(
-    () => colorMode.value,
-    () => nextTick(() => requestAnimationFrame(readThemeColors))
-  );
 
   const labelFormat = computed(
     () =>
