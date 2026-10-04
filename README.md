@@ -27,7 +27,7 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 - **Collapsible sidebar** built with UI Thing's Sidebar. It collapses to an icon rail (with tooltips), remembers its state in a cookie, toggles with `Ctrl/Cmd + B`, and opens as a slide-over sheet on mobile.
 - **Store navigation:** Dashboard, Customers, Orders, Products, Staff, Analytics, Settings and Help, with expandable sub-menus (List and Create), active-page highlighting and breadcrumbs in the header.
 - **User menu** in the sidebar footer, with Profile, Billing, Team members and Log out.
-- **"Coming soon" pages.** Every sidebar link has a real URL. Only the dashboard is built so far, so the rest show a placeholder page. Edit, Delete and Details have pages (for example `/customers/edit`, `/customers/delete` and `/customers/details`, and the same for orders, products and staff) but no sidebar link, because they need a record. They will be reached from the rows of each list page. Unknown URLs still return a 404.
+- **"Coming soon" pages.** Analytics, Settings, Help and the account pages (Profile, Billing, Team members) have real URLs but only show a placeholder for now. Unknown URLs still return a 404.
 
 ### Dashboard
 
@@ -39,13 +39,25 @@ An ecommerce overview at `/dashboard`, with loading skeletons and a retry button
 - **New customers**, **recent activity** (orders, sign-ups, reviews, refunds, low stock) and **recently added products** with stock status.
 - **Reminders** you can check off. Check marks are not saved yet.
 
+### Customers, orders, products and staff
+
+Each of the four has the same set of pages, opened from the sidebar:
+
+- **List** with search, sortable columns, filters, pagination and a row menu (View, Edit, Delete). The search, sort, filters and page live in the URL, so you can reload, go back or share the link and get the same view.
+- **Create** and **Edit** forms with inline validation (zod + vee-validate). Details (`/customers/<id>`) and edit (`/customers/<id>/edit`) pages are opened from the list rows.
+- **Details** pages: a customer's profile and recent orders, an order's items, totals and customer, a product's price and stock, a team member's profile.
+- **Delete** asks for confirmation, from the list and from the details page.
+- **Orders** have multiple line items (add and remove rows, with a live total). The customer and product pickers are searchable and load matches from the API as you type, so they stay short however many records there are, and a quick "Update status" menu on the details page. A customer's "View all" link opens the orders list filtered to that customer.
+- Everything you create, edit or delete shows up straight away in the lists and on the dashboard (for example under "Recently added products"). Changes are kept in server memory and reset when the dev server restarts.
+
 ### Mock API
 
-All data is generated with faker, so there is no database.
+All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders and 12 staff members, and lives in server memory.
 
-- `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/auth-schemas.ts`).
-- `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m`, `orders`, `products`, `customers` (each with an optional `limit`), `activity` and `reminders`. Invalid query values return a 400.
-- The dashboard data is seeded, so it looks the same on every load. Responses include a short artificial delay so the loading states are visible.
+- `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`.
+- `server/api/<resource>/` (`customers`, `orders`, `products`, `staff`) is one set of routes for all four resources: `GET /api/<resource>` (with `page`, `pageSize`, `search`, `sort`, `order` and filters like `status`, `category`, `role` or `customerId`), `POST /api/<resource>`, and `GET`, `PUT` (partial updates) and `DELETE` on `/api/<resource>/<id>`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/`). Invalid input returns a 400 with field errors, and unknown ids a 404.
+- `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m`, `activity` and `reminders` are seeded, and `orders`, `products` and `customers` return the newest records from the store.
+- Responses include a short artificial delay so the loading states are visible.
 
 ### General
 
@@ -57,7 +69,8 @@ All data is generated with faker, so there is no database.
 - [x] **Authentication**: login, register, forgot password, route protection, idle sign-out
 - [x] **Dashboard shell**: sidebar, header, profile menu and navigation
 - [x] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
-- [ ] **Real pages for the sidebar links**: customers, orders, products, staff, analytics, settings (currently "coming soon" pages)
+- [x] **Customers, orders, products and staff**: list, create, details, edit and delete, backed by an in-memory mock store
+- [ ] **Analytics, Settings, Help and account pages** (currently "coming soon" pages)
 
 ## Tech stack
 
@@ -100,21 +113,25 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 ```
 app/
   components/
-    App/             Sidebar and header for the admin layout
+    App/             Sidebar, header and the shared error state
+    Customers/       List, Form and Details (same for Orders, Products and Staff)
     Dashboard/       Dashboard widgets (stat cards, sales chart, tables, feeds)
+    Resource/        Generic list page, row actions, delete dialog and form shell
     Ui/              UI Thing components (generated, safe to edit)
-  composables/       useAuth: session, login, register, logout
+  composables/       useAuth, useResourceList, useResourceForm, useResourceView
   layouts/           auth (centered card) and default (admin layout with sidebar)
   middleware/        auth.global.ts: route protection and last-visited redirect
   pages/             login, register, forgot-password, dashboard
   placeholders/      the shared "coming soon" page
   plugins/           idle-logout.client.ts
+  resource-pages/    the generic list, create, details and edit pages
   utils/             navigation.ts (sidebar links and routes), format helpers
 server/
   api/auth/          mock auth endpoints
+  api/[resource]/    list, create, get, update and delete for every resource
   api/dashboard/     mock dashboard data
-  utils/             faker helpers, seeded mock data and request validation
-shared/              zod schemas and types used by both the app and the server
+  utils/             in-memory store, faker helpers and request validation
+shared/              zod schemas, types and the resource registry used by app and server
 ```
 
 ## Contributing
