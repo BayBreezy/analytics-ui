@@ -73,7 +73,7 @@ export const mainNav: NavGroup[] = [
 
 export const secondaryNav: NavItem[] = [
   { title: "Settings", url: "/settings", icon: "lucide:settings", real: true },
-  { title: "Help", url: "/help", icon: "lucide:circle-help" },
+  { title: "Help", url: "/help", icon: "lucide:circle-help", real: true },
 ];
 
 /** Pages reached from the user menu in the sidebar footer. */

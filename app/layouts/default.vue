@@ -13,6 +13,7 @@
 <script lang="ts" setup>
   // Page titles read "Orders · Store name". The name is a template param, so the title updates
   // when the settings load or change.
+  useGlobalShortcuts();
   const { settings } = useSettings();
   useHead(() => ({
     titleTemplate: "%s %separator %site",

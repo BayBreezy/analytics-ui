@@ -116,6 +116,21 @@ export const settingsSchema = z.object({
   }),
 });
 
+export const ticketSchema = z.object({
+  subject: z
+    .string({ required_error: "Add a subject" })
+    .trim()
+    .min(3, "The subject must be at least 3 characters")
+    .max(100, "The subject must be 100 characters or fewer"),
+  category: z.enum(TICKET_CATEGORIES, { errorMap: () => ({ message: "Select a category" }) }),
+  priority: z.enum(TICKET_PRIORITIES, { errorMap: () => ({ message: "Select a priority" }) }),
+  message: z
+    .string({ required_error: "Tell us what's going on" })
+    .trim()
+    .min(10, "Add a few more details (at least 10 characters)")
+    .max(1000, "The message must be 1,000 characters or fewer"),
+});
+
 export const resourceSchemas = {
   customers: customerSchema,
   orders: orderSchema,
@@ -141,5 +156,6 @@ export type ProductInput = z.infer<typeof productSchema>;
 export type StaffInput = z.infer<typeof staffSchema>;
 export type OrderInput = z.infer<typeof orderSchema>;
 export type InviteInput = z.infer<typeof inviteSchema>;
+export type TicketInput = z.infer<typeof ticketSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
 export type ListQuery = z.infer<typeof listQuerySchema>;

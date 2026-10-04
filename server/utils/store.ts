@@ -13,6 +13,7 @@ interface Store {
   invitations: Invitation[];
   settings: Settings;
   sessions: AccountSession[];
+  tickets: Ticket[];
   billing: {
     subscription: Subscription;
     paymentMethods: PaymentMethod[];
@@ -207,6 +208,40 @@ function seed(): Store {
     { id: "pm_3", brand: "amex", last4: "0005", expMonth: 11, expYear: 2030, isDefault: false },
   ];
 
+  const tickets: Ticket[] = [
+    {
+      id: "tkt_8001",
+      subject: "Order #ORD-4790 shows the wrong total",
+      category: "orders",
+      priority: "high",
+      message:
+        "The total on the order page doesn't match what the customer was charged. Can you take a look?",
+      status: "open",
+      createdAt: hoursAgo(5),
+    },
+    {
+      id: "tkt_8002",
+      subject: "How do I change the owner of the account?",
+      category: "account",
+      priority: "normal",
+      message: "We have a new store manager and want to hand over the main account to them.",
+      status: "answered",
+      reply:
+        "Make them an admin from Team members, then ask them to sign in and remove your own admin role. Let us know if you get stuck.",
+      createdAt: daysAgo(3),
+    },
+    {
+      id: "tkt_8003",
+      subject: "Invoice for last March",
+      category: "billing",
+      priority: "low",
+      message: "Could you resend the invoice for March? I can't find it in my inbox.",
+      status: "closed",
+      reply: "All invoices are under Billing, where you can view or download each one.",
+      createdAt: daysAgo(21),
+    },
+  ];
+
   return {
     customers,
     orders,
@@ -215,6 +250,7 @@ function seed(): Store {
     invitations,
     settings,
     sessions,
+    tickets,
     billing: {
       subscription: {
         planId: "growth",
@@ -232,6 +268,7 @@ function seed(): Store {
       ord_: 4822,
       inv_: 7001 + invitations.length,
       bill_: 5001 + invoices.length,
+      tkt_: 8001 + tickets.length,
     },
   };
 }
@@ -263,6 +300,12 @@ export const withInvitationStatus = (invitation: Invitation): Invitation =>
   invitation.status === "pending" && new Date(invitation.expiresAt).getTime() < Date.now()
     ? { ...invitation, status: "expired" }
     : invitation;
+
+/** Takes the next free number for a support ticket. */
+export function nextTicketNumber() {
+  const counters = getStore().counters;
+  return (counters.tkt_ = (counters.tkt_ ?? 0) + 1) - 1;
+}
 
 /** Takes the next free number for an invoice. */
 export function nextInvoiceNumber() {

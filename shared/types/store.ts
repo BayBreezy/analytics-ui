@@ -123,6 +123,23 @@ export interface AccountSession {
   current: boolean;
 }
 
+export type TicketCategory = "orders" | "billing" | "account" | "bug" | "other";
+export type TicketPriority = "low" | "normal" | "high";
+export type TicketStatus = "open" | "answered" | "closed";
+
+/** A request to the support team, made from the Help page. */
+export interface Ticket {
+  id: string;
+  subject: string;
+  category: TicketCategory;
+  priority: TicketPriority;
+  message: string;
+  status: TicketStatus;
+  /** What the support team said, once they have answered. */
+  reply?: string;
+  createdAt: string;
+}
+
 export interface ResourceMap {
   customers: Customer;
   orders: Order;
