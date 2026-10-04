@@ -6,14 +6,17 @@ const views: Record<"List" | "Form" | "Details", Partial<Record<ResourceName, Lo
   List: {
     customers: (() => import("../components/Customers/List.vue")) as Loader,
     products: (() => import("../components/Products/List.vue")) as Loader,
+    staff: (() => import("../components/Staff/List.vue")) as Loader,
   },
   Form: {
     customers: (() => import("../components/Customers/Form.vue")) as Loader,
     products: (() => import("../components/Products/Form.vue")) as Loader,
+    staff: (() => import("../components/Staff/Form.vue")) as Loader,
   },
   Details: {
     customers: (() => import("../components/Customers/Details.vue")) as Loader,
     products: (() => import("../components/Products/Details.vue")) as Loader,
+    staff: (() => import("../components/Staff/Details.vue")) as Loader,
   },
 };
 
