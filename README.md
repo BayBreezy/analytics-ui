@@ -18,7 +18,7 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 - **Remember me.** When checked, you stay signed in for 30 days. Otherwise the session ends when the browser closes.
 - **Protected routes.** A global route middleware sends signed-out users to `/login`. It runs on the server too, so protected content never flashes.
 - **Returns you where you were.** After signing in you land on the last page you visited (falling back to `/dashboard`). Signed-in users who open `/login`, `/register` or `/forgot-password` are redirected away from them. Unknown URLs (for example `/sw.js` requested by a browser extension) are never remembered as a destination.
-- **Automatic sign-out when idle.** After 5 minutes without mouse, keyboard, scroll or touch activity you are signed out and shown a toast. Activity in any open tab counts, so using one tab won't sign you out of another. The timeout is configurable (see [Configuration](#configuration)).
+- **Automatic sign-out when idle.** After 5 minutes without mouse, keyboard, scroll or touch activity you are signed out and shown a toast. Activity in any open tab counts, so using one tab won't sign you out of another. The timeout is configurable: pick 1, 5, 15 or 30 minutes (or never) under **Settings → Security**, and the app default is set with an environment variable (see [Configuration](#configuration)).
 
 **Demo account:** `demo@analytics.test` / `password123`. In practice, any well-formed email and a password of 8+ characters will sign you in.
 
@@ -27,7 +27,8 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 - **Collapsible sidebar** built with UI Thing's Sidebar. It collapses to an icon rail (with tooltips), remembers its state in a cookie, toggles with `Ctrl/Cmd + B`, and opens as a slide-over sheet on mobile.
 - **Store navigation:** Dashboard, Customers, Orders, Products, Staff, Analytics, Settings and Help, with expandable sub-menus (List and Create), active-page highlighting and breadcrumbs in the header.
 - **User menu** in the sidebar footer, with Profile, Billing, Team members and Log out.
-- **"Coming soon" pages.** Settings, Help, Profile and Billing have real URLs but only show a placeholder for now. Unknown URLs still return a 404.
+- **Keyboard shortcuts:** `G` then `D`, `O`, `C`, `P` or `S` jumps to the dashboard, orders, customers, products or staff, and `?` opens the shortcut list. They are ignored while you type in a field or when a dialog is open.
+- Unknown URLs (such as `/sw.js`) return a 404 rather than a placeholder page.
 
 ### Dashboard
 
@@ -67,14 +68,56 @@ Three pages under **Analytics** in the sidebar. The breakdowns are worked out fr
 - **Invitations** are listed with their status (pending, accepted, cancelled or expired) and can be resent, copied as a link or cancelled. No email is sent. "Mark as accepted (demo)" pretends the invited person accepted, which adds them to the team.
 - **Members** can have their role changed, be deactivated and reactivated, or be removed. The last active admin can't be removed, demoted or deactivated.
 
+### Profile
+
+`/account/profile` (from the user menu) is where you manage your own account.
+
+- **Personal info:** name, email, job title, phone, bio and an avatar picked from a gallery (there are no uploads). Saving updates the sidebar straight away. The profile is kept in your session cookie, so it keeps the same lifetime as your sign-in ("Remember me" or the browser session).
+- **Password:** current, new and confirm fields with the same strength meter as registration. It is a demo, so there is no real password to check against and any valid change succeeds.
+- **Active sessions:** a list of signed-in devices (sample data). Sign out one device, or all the others. The device you are on can't be signed out from the list.
+- **Delete account** signs you out. Nothing is stored on the server, so there is nothing else to delete.
+
+### Settings
+
+`/settings` has five tabs, kept in the URL (`?tab=`).
+
+- **General:** store name, support email and timezone. The store name shows in the sidebar and the browser tab title. These are saved in server memory and reset when the dev server restarts.
+- **Appearance:** light, dark or system theme, and the default number of rows per page in lists (a page size picked in the list itself still wins). Both are saved in this browser.
+- **Notifications:** email and in-app switches for new orders, low stock, new customers, the weekly report and team invitations. The choices are saved, but nothing is sent, so they have no effect yet.
+- **Security:** how long until you are signed out for being idle (1, 5, 15 or 30 minutes, or never). Saved in this browser and applied straight away.
+- **Data:** reset the demo data. This replaces every customer, order, product, team change, setting and session with the original sample data. Your own account and this browser's preferences are kept.
+
+### Billing
+
+`/account/billing` (from the user menu) shows a demo subscription. Nothing is ever charged and no real card numbers are asked for or stored.
+
+- **Plan and usage:** your plan, price and renewal date, with meters for products, team members and orders in the last 30 days, worked out from the store and measured against the plan's limits. The meters turn amber at 80% and red at the limit.
+- **Change plan:** pick Starter, Growth or Scale, billed monthly or yearly (two months free). A plan can't be chosen if you already use more than it allows. Changing plan adds an invoice.
+- **Cancel and keep:** cancelling lets the plan run until the end of the period, and "Keep my plan" undoes it.
+- **Payment method:** choose which of three demo cards is the default.
+- **Invoices:** a table of your billing history with status badges. Each invoice can be opened as a printable page or downloaded.
+
+### Help
+
+`/help` has four tabs, kept in the URL (`?tab=`).
+
+- **FAQ:** questions grouped by topic, with a search box that filters them and opens the matching answers.
+- **Contact support:** send a message with a category and priority, and see your requests with their status. You can close a request. This is a demo, so nobody replies.
+- **Shortcuts:** the keyboard shortcuts above.
+- **What's new:** a timeline of what has been added to the app.
+
 ### Mock API
 
-All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders, 12 staff members and 6 invitations, and lives in server memory.
+All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders, 12 staff members, 6 invitations, the store settings 4 signed-in devices, a demo subscription with 12 invoices and 3 support requests, and lives in server memory.
 
 - `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`.
 - `server/api/<resource>/` (`customers`, `orders`, `products`, `staff`) is one set of routes for all four resources: `GET /api/<resource>` (with `page`, `pageSize`, `search`, `sort`, `order` and filters like `status`, `category`, `role` or `customerId`), `POST /api/<resource>`, and `GET`, `PUT` (partial updates) and `DELETE` on `/api/<resource>/<id>`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/`). Invalid input returns a 400 with field errors, and unknown ids a 404.
 - `server/api/analytics/` feeds the analytics pages: `overview?range=`, `statistics` and `trends?metric=&range=&compare=`. Invalid query values return a 400.
 - `server/api/team/invitations/` handles invitations: `GET` (optionally `?status=`), `POST` to invite (409 for an existing member or a pending invitation), `DELETE /:id` to cancel, `POST /:id/resend` and `POST /:id/accept` (demo only).
+- `server/api/account/` backs the profile page: `PUT profile` and `POST password` (validated, and 400 on invalid input), plus `GET sessions`, `DELETE sessions/:id` and `DELETE sessions/others`.
+- `server/api/settings/` has `GET` and `PUT` for the store settings and `POST reset` to restore the sample data.
+- `server/api/billing/` backs the billing page: `GET` (plan, usage and cards), `PUT subscription` (409 if the store uses more than the plan allows), `POST subscription/cancel` and `subscription/resume`, `POST payment-methods/:id/default`, `GET invoices` (optionally `?status=`) and `GET invoices/:id` (a printable page, or a download with `?download=1`).
+- `server/api/support/tickets/` has `GET` and `POST` (validated) for support requests, and `POST /:id/close`.
 - `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m`, `activity` and `reminders` are seeded, and `orders`, `products` and `customers` return the newest records from the store.
 - Responses include a short artificial delay so the loading states are visible.
 
@@ -90,7 +133,8 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - [x] **Mock data and dashboard widgets**: metric cards, sales chart, recent orders, customers, activity, products and reminders
 - [x] **Customers, orders, products and staff**: list, create, details, edit and delete, backed by an in-memory mock store
 - [x] **Analytics and team members**: overview, statistics and trends pages, and a team page with invitations
-- [ ] **Settings, Help, Profile and Billing** (currently "coming soon" pages)
+- [x] **Profile and settings**: your account details, password and devices, store settings, appearance, notifications, idle sign-out and a data reset
+- [x] **Billing and Help**: a demo subscription with invoices, an FAQ, support requests and keyboard shortcuts
 
 ## Tech stack
 
@@ -124,9 +168,9 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 
 ### Configuration
 
-| Variable                      | Default          | Description                                           |
-| ----------------------------- | ---------------- | ----------------------------------------------------- |
-| `NUXT_PUBLIC_IDLE_TIMEOUT_MS` | `300000` (5 min) | Inactivity time before a signed-in user is signed out |
+| Variable                      | Default          | Description                                                                                 |
+| ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
+| `NUXT_PUBLIC_IDLE_TIMEOUT_MS` | `300000` (5 min) | Default inactivity time before a user is signed out. Each browser can change it in Settings |
 
 ## Project structure
 
@@ -134,25 +178,32 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 app/
   components/
     Analytics/       Chart card and the analytics charts and tables
+    Billing/         Plan card, plans dialog, payment methods and invoices
     App/             Sidebar, header, error state and confirm dialog
     Customers/       List, Form and Details (same for Orders, Products and Staff)
     Dashboard/       Dashboard widgets (stat cards, sales chart, tables, feeds)
+    Help/            FAQ, contact, shortcuts and changelog tabs
+    Profile/         Personal info, password, sessions and delete-account cards
     Resource/        Generic list page, row actions, delete dialog, form shell and searchable select
+    Settings/        The tabs of the settings page
     Team/            Members and invitations tabs and the invite dialog
     Ui/              UI Thing components (generated, safe to edit)
-  composables/       useAuth, useChartColors, useQueryParam, useResourceList, useResourceForm, useResourceView
+  composables/       useAuth, usePreferences, useSettings, useGlobalShortcuts, useChartColors, useQueryParam, useResource*
   layouts/           auth (centered card) and default (admin layout with sidebar)
   middleware/        auth.global.ts: route protection and last-visited redirect
-  pages/             login, register, forgot-password, dashboard, analytics/*, account/team
-  placeholders/      the shared "coming soon" page
+  pages/             login, register, forgot-password, dashboard, settings, help, analytics/*, account/*
   plugins/           idle-logout.client.ts
   resource-pages/    the generic list, create, details and edit pages
   utils/             navigation.ts (sidebar links and routes), format helpers
 server/
+  api/account/       profile, password and sessions
   api/analytics/     mock analytics data
   api/auth/          mock auth endpoints
+  api/billing/       plan, usage, cards and invoices
   api/[resource]/    list, create, get, update and delete for every resource
   api/dashboard/     mock dashboard data
+  api/settings/      store settings and the data reset
+  api/support/       support tickets
   api/team/          invitations
   utils/             in-memory store, faker helpers and request validation
 shared/              zod schemas, types and the resource registry used by app and server
