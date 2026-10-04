@@ -107,7 +107,7 @@
   async function updateStatus(status: OrderStatus) {
     updating.value = true;
     try {
-      await $fetch(`/api/orders/${props.record.id}`, { method: "PUT", body: { status } });
+      await $fetch(`/api/orders/${props.record.id}` as string, { method: "PUT", body: { status } });
       useSonner("Order updated", { description: `${props.record.number} is now ${status}.` });
       emit("changed");
     } catch (error) {

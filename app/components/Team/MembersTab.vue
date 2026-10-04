@@ -139,7 +139,7 @@
   async function change(member: StaffMember, patch: Partial<StaffMember>, message: string) {
     busy.value = member.id;
     try {
-      await $fetch(`/api/staff/${member.id}`, { method: "PUT", body: patch });
+      await $fetch(`/api/staff/${member.id}` as string, { method: "PUT", body: patch });
       useSonner("Team updated", { description: message });
       emit("changed");
     } catch (error) {

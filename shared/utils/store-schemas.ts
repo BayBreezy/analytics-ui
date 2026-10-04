@@ -162,6 +162,9 @@ export const listQuerySchema = z.object({
   customerId: z.string().optional(),
 });
 
+/** The same search, filters and sort as the list, but with every match and no paging. */
+export const exportQuerySchema = listQuerySchema.omit({ page: true, pageSize: true });
+
 export type CustomerInput = z.infer<typeof customerSchema>;
 export type ProductInput = z.infer<typeof productSchema>;
 export type StaffInput = z.infer<typeof staffSchema>;

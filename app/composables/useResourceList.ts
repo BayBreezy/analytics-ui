@@ -69,6 +69,7 @@ export function useResourceList<K extends ResourceName>(resource: K, filterKeys:
     refresh,
     page,
     pageSize,
+    apiQuery,
     sort,
     order,
     filters,

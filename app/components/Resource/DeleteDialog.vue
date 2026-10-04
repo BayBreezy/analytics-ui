@@ -25,7 +25,7 @@
     const record = props.record;
     if (!record) return;
     try {
-      await $fetch(`/api/${props.resource}/${record.id}`, { method: "DELETE" });
+      await $fetch(`/api/${props.resource}/${record.id}` as string, { method: "DELETE" });
       useSonner(`${singular.value} deleted`, { description: `${record.label} was removed.` });
       emit("deleted");
     } catch (error) {

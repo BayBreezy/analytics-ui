@@ -10,10 +10,22 @@
           <template v-else>&nbsp;</template>
         </p>
       </div>
-      <UiButton v-if="canWrite" :to="`${meta.base}/create`">
-        <Icon name="lucide:plus" />
-        New {{ meta.singular.toLowerCase() }}
-      </UiButton>
+      <div class="flex flex-wrap items-center gap-2">
+        <UiButton
+          v-if="list.data.value?.total"
+          as="a"
+          variant="outline"
+          :href="exportUrl"
+          :aria-label="`Export ${formatNumber(list.data.value.total)} ${meta.plural.toLowerCase()} as CSV`"
+        >
+          <Icon name="lucide:download" />
+          Export CSV
+        </UiButton>
+        <UiButton v-if="canWrite" :to="`${meta.base}/create`">
+          <Icon name="lucide:plus" />
+          New {{ meta.singular.toLowerCase() }}
+        </UiButton>
+      </div>
     </div>
 
     <UiCard class="gap-0 overflow-hidden py-0">
@@ -222,6 +234,13 @@
     if (first) list.setSort(first.id, first.desc ? "desc" : "asc");
     else list.setSort();
   }
+
+  // Exports everything that matches the search and filters now showing, not just this page.
+  const exportUrl = computed(() => {
+    const { page: _page, pageSize: _pageSize, ...rest } = list.apiQuery.value;
+    const params = new URLSearchParams(rest as Record<string, string>);
+    return `/api/${props.resource}/export?${params}`;
+  });
 
   const deleting = ref<{ id: string; label: string } | null>(null);
   function onDeleted() {

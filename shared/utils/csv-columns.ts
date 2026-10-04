@@ -1,0 +1,47 @@
+/** The columns of each resource's CSV export. */
+export const CSV_COLUMNS: { [K in ResourceName]: CsvColumn<ResourceMap[K]>[] } = {
+  customers: [
+    { header: "ID", value: (row) => row.id },
+    { header: "Name", value: (row) => row.name },
+    { header: "Email", value: (row) => row.email },
+    { header: "Phone", value: (row) => row.phone },
+    { header: "City", value: (row) => row.city },
+    { header: "Country", value: (row) => row.country },
+    { header: "Status", value: (row) => row.status },
+    { header: "Orders", value: (row) => row.ordersCount },
+    { header: "Total spent", value: (row) => row.totalSpent },
+    { header: "Created", value: (row) => row.createdAt },
+  ],
+  orders: [
+    { header: "Order", value: (row) => row.number },
+    { header: "Customer", value: (row) => row.customer.name },
+    { header: "Customer email", value: (row) => row.customer.email },
+    { header: "Status", value: (row) => row.status },
+    {
+      header: "Items",
+      value: (row) => row.items.map((item) => `${item.quantity} x ${item.name}`).join("; "),
+    },
+    { header: "Total", value: (row) => row.total },
+    { header: "Notes", value: (row) => row.notes },
+    { header: "Created", value: (row) => row.createdAt },
+  ],
+  products: [
+    { header: "ID", value: (row) => row.id },
+    { header: "Name", value: (row) => row.name },
+    { header: "SKU", value: (row) => row.sku },
+    { header: "Category", value: (row) => row.category },
+    { header: "Price", value: (row) => row.price },
+    { header: "Stock", value: (row) => row.stock },
+    { header: "Status", value: (row) => row.status },
+    { header: "Created", value: (row) => row.createdAt },
+  ],
+  staff: [
+    { header: "ID", value: (row) => row.id },
+    { header: "Name", value: (row) => row.name },
+    { header: "Email", value: (row) => row.email },
+    { header: "Phone", value: (row) => row.phone },
+    { header: "Role", value: (row) => row.role },
+    { header: "Status", value: (row) => row.status },
+    { header: "Created", value: (row) => row.createdAt },
+  ],
+};
