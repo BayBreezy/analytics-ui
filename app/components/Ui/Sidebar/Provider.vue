@@ -55,7 +55,12 @@
 
   const emits = defineEmits<{ "update:open": [open: boolean] }>();
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  // The server can't know the screen size, so it renders the desktop sidebar. Waiting until the app
+  // is mounted before switching to the mobile sheet keeps the first client render identical to the
+  // server's, which avoids a hydration mismatch on phones. (Edited from the UI Thing original.)
+  const mounted = useMounted();
+  const matchesMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = computed(() => mounted.value && matchesMobile.value);
   const openMobile = ref(false);
 
   const initialOpen = computed(() => sidebarCookie.value ?? props.defaultOpen);
