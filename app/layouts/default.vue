@@ -4,7 +4,15 @@
     <UiSidebarInset>
       <AppHeader />
       <div class="flex flex-1 flex-col gap-6 p-4 md:p-6">
-        <slot />
+        <!-- A page that throws while rendering shows a message here, and the sidebar stays usable. -->
+        <NuxtErrorBoundary>
+          <slot />
+          <template #error="{ clearError: reset }">
+            <div class="flex flex-1 items-center justify-center">
+              <AppErrorState what="this page" @retry="reset()" />
+            </div>
+          </template>
+        </NuxtErrorBoundary>
       </div>
       <AppCommandPalette />
     </UiSidebarInset>
