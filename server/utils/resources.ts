@@ -33,6 +33,22 @@ function resolveItems(rows: OrderInput["items"], existing: OrderItem[] = []): Or
   });
 }
 
+/** The team always keeps at least one active admin, so nobody can be locked out of managing it. */
+function guardLastAdmin(member: StaffMember, change: "remove" | Partial<StaffMember>) {
+  if (member.role !== "admin" || member.status !== "active") return;
+  const losesAdmin =
+    change === "remove" ||
+    (change.role !== undefined && change.role !== "admin") ||
+    change.status === "inactive";
+  if (!losesAdmin) return;
+  const otherAdmins = getStore().staff.filter(
+    (entry) => entry.id !== member.id && entry.role === "admin" && entry.status === "active"
+  );
+  if (otherAdmins.length === 0) {
+    throw badRequest("At least one active admin is required. Make someone else an admin first.");
+  }
+}
+
 export function createResource<K extends ResourceName>(
   name: K,
   input: Record<string, unknown>
@@ -101,6 +117,7 @@ export function updateResource<K extends ResourceName>(
   if (index === -1) return notFound(name, id);
 
   const current = collection[index]!;
+  if (name === "staff") guardLastAdmin(current as StaffMember, patch as Partial<StaffMember>);
   let next = {
     ...current,
     ...patch,
@@ -130,5 +147,6 @@ export function deleteResource(name: ResourceName, id: string) {
   const collection = getStore()[name] as { id: string }[];
   const index = collection.findIndex((entry) => entry.id === id);
   if (index === -1) return notFound(name, id);
+  if (name === "staff") guardLastAdmin(collection[index] as StaffMember, "remove");
   collection.splice(index, 1);
 }

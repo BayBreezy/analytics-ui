@@ -87,6 +87,12 @@ export const orderSchema = z.object({
   notes: z.string().trim().max(500, "Notes must be 500 characters or fewer"),
 });
 
+export const inviteSchema = z.object({
+  email,
+  role: z.enum(STAFF_ROLES, { errorMap: () => ({ message: "Select a role" }) }),
+  message: z.string().trim().max(300, "The message must be 300 characters or fewer").default(""),
+});
+
 export const resourceSchemas = {
   customers: customerSchema,
   orders: orderSchema,
@@ -111,4 +117,5 @@ export type CustomerInput = z.infer<typeof customerSchema>;
 export type ProductInput = z.infer<typeof productSchema>;
 export type StaffInput = z.infer<typeof staffSchema>;
 export type OrderInput = z.infer<typeof orderSchema>;
+export type InviteInput = z.infer<typeof inviteSchema>;
 export type ListQuery = z.infer<typeof listQuerySchema>;

@@ -77,6 +77,21 @@ export interface Order {
   createdAt: string;
 }
 
+export type InvitationStatus = "pending" | "accepted" | "cancelled" | "expired";
+
+export interface Invitation {
+  id: string;
+  email: string;
+  role: StaffRole;
+  /** `expired` is worked out when the invitation is read: still pending, but past `expiresAt`. */
+  status: InvitationStatus;
+  message: string;
+  invitedBy: string;
+  /** When the invitation was last sent. */
+  createdAt: string;
+  expiresAt: string;
+}
+
 export interface ResourceMap {
   customers: Customer;
   orders: Order;

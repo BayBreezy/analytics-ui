@@ -10,6 +10,7 @@ interface Store {
   orders: Order[];
   products: Product[];
   staff: StaffMember[];
+  invitations: Invitation[];
   /** Next number to use for each id prefix. */
   counters: Record<string, number>;
 }
@@ -115,16 +116,46 @@ function seed(): Store {
     };
   });
 
+  // A few invitations in every state. The accepted one is for someone already on the team.
+  const invites = createMock(501);
+  const invitation = (
+    index: number,
+    email: string,
+    role: StaffRole,
+    status: Invitation["status"],
+    sentDaysAgo: number,
+    expiresInDays: number
+  ): Invitation => ({
+    id: `inv_${7001 + index}`,
+    email,
+    role,
+    status,
+    message: invites.helpers.maybe(() => invites.lorem.sentence(), { probability: 0.5 }) ?? "",
+    invitedBy: "Demo User",
+    createdAt: daysAgo(sentDaysAgo),
+    expiresAt: daysAgo(-expiresInDays),
+  });
+  const invitations: Invitation[] = [
+    invitation(0, invites.internet.email().toLowerCase(), "support", "pending", 1, 6),
+    invitation(1, invites.internet.email().toLowerCase(), "manager", "pending", 6, 1),
+    invitation(2, invites.internet.email().toLowerCase(), "support", "pending", 2, 5),
+    invitation(3, invites.internet.email().toLowerCase(), "admin", "pending", 12, -5),
+    invitation(4, invites.internet.email().toLowerCase(), "support", "cancelled", 10, 0),
+    invitation(5, staff[5]!.email, staff[5]!.role, "accepted", 40, 0),
+  ];
+
   return {
     customers,
     orders,
     products,
     staff,
+    invitations,
     counters: {
       cus_: 1001 + customers.length,
       prd_: 2001 + products.length,
       stf_: 301 + staff.length,
       ord_: 4822,
+      inv_: 7001 + invitations.length,
     },
   };
 }
@@ -146,6 +177,18 @@ export function nextNumber(name: ResourceName) {
   const counters = getStore().counters;
   const prefix = PREFIXES[name];
   return (counters[prefix] = (counters[prefix] ?? 0) + 1) - 1;
+}
+
+/** An invitation as it should be shown: pending ones past their expiry are `expired`. */
+export const withInvitationStatus = (invitation: Invitation): Invitation =>
+  invitation.status === "pending" && new Date(invitation.expiresAt).getTime() < Date.now()
+    ? { ...invitation, status: "expired" }
+    : invitation;
+
+/** Takes the next free number for an invitation id. */
+export function nextInvitationNumber() {
+  const counters = getStore().counters;
+  return (counters.inv_ = (counters.inv_ ?? 0) + 1) - 1;
 }
 
 /** What gets searched, sorted and filtered for each resource. */
@@ -270,4 +313,17 @@ export function getResourceParam(event: H3Event): ResourceName {
     });
   }
   return name;
+}
+
+/** Finds an invitation by id, or throws a 404. */
+export function findInvitation(id: string) {
+  const invitation = getStore().invitations.find((entry) => entry.id === id);
+  if (!invitation) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Not Found",
+      message: `No invitation with id "${id}"`,
+    });
+  }
+  return invitation;
 }

@@ -80,7 +80,7 @@ export const secondaryNav: NavItem[] = [
 export const accountNav: NavItem[] = [
   { title: "Profile", url: "/account/profile", icon: "lucide:user" },
   { title: "Billing", url: "/account/billing", icon: "lucide:credit-card" },
-  { title: "Team members", url: "/account/team", icon: "lucide:users-round" },
+  { title: "Team members", url: "/account/team", icon: "lucide:users-round", real: true },
 ];
 
 /** Every page with an entry in the navigation, flattened, with the parent item if there is one. */
