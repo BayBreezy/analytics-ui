@@ -24,7 +24,8 @@ Nuxt 4 + UI Thing + Tailwind v4 ecommerce admin dashboard on dummy data. Package
 
 - Use UI Thing components (`UiButton`, `UiCard`, ...) and lucide icons (`lucide:*`) only. Put icons in a button's default slot, not its `icon` prop (that one only shows on hover).
 - Forms: vee-validate + zod with `toTypedSchema` and the `UiVee*` inputs. Reuse the shared schemas in `shared/utils/store-schemas.ts` and `auth-schemas.ts` for both form and API validation.
-- Tables: `UiTanStackTable`. Searchable pickers for long lists: `ResourceSelect`.
+- Tables: `UiTanStackTable`. Searchable pickers for long lists: `ResourceSelect`. Lists get Export CSV (`server/api/[resource]/export.get.ts`, columns in `shared/utils/csv-columns.ts`) and row selection with bulk actions (`bulk.post.ts`) from `ResourceListPage` for free.
+- The command palette (`app/components/App/CommandPalette.vue`) is built from Reka's listbox parts, not `UiCommandItem`/`UiCommandGroup`: those only show an item if it matched the text typed at that moment, which hides results that arrive from the server.
 - Charts: wrap `UiApexchart` in `AnalyticsChartCard`, build options from `baseChartOptions()` and take colors from `useChartColors()`. ApexCharts' own default colors are hardcoded blues, so always pass colors.
 - Every widget needs loading (`UiSkeleton`), error (`AppErrorState` with retry) and empty (`UiEmpty`) states. Check light and dark mode and a 375px width (no horizontal overflow).
 
@@ -42,6 +43,7 @@ Nuxt 4 + UI Thing + Tailwind v4 ecommerce admin dashboard on dummy data. Package
 - Customers, orders, products and staff share one API (`server/api/[resource]/`) and four generic pages (`app/resource-pages/`). To add a resource: extend `shared/utils/resources.ts`, its types and zod schema, the store/`server/utils/resources.ts`, then add `List.vue`, `Form.vue` and `Details.vue` in `app/components/<Resource>/`, and register them in `app/composables/useResourceView.ts`.
 - Analytics breakdowns are derived from the store (`server/utils/analytics.ts`), while time series are seeded (`server/utils/sales.ts`). Team invitations live in the store too (`server/api/team/`).
 - The signed-in user's profile lives in the session cookie (`useAuth().updateUser`), per-browser preferences in cookies (`usePreferences()`), and store-level data (settings, sessions, invitations, billing, support tickets) in the store. `POST /api/settings/reset` re-seeds everything, so any new collection must be added to `seed()`. Store events that should tell the user call `notify()` (`server/utils/notifications.ts`), which respects the in-app switches in Settings.
+- A dynamic `$fetch` URL like `` `/api/${resource}/${id}` `` can't use `PUT` or `DELETE` while a static GET-only route such as `export` exists beside `[id]`, because Nitro's typed routes get in the way. Cast the URL `as string`.
 - Fetch on the client with `useFetch(..., { server: false })`. Give record pages a key with `useId()` so a page opened right after another never shows stale data.
 - List state (page, search, sort, filters) lives in the URL query (`useResourceList`).
 

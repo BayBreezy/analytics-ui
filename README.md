@@ -28,6 +28,7 @@ Sign-in is a demo. There are no real passwords, the session cookie is not signed
 - **Store navigation:** Dashboard, Customers, Orders, Products, Staff, Analytics, Settings and Help, with expandable sub-menus (List and Create), active-page highlighting and breadcrumbs in the header.
 - **User menu** in the sidebar footer, with your role, Profile, Billing, Team members and Log out (only the pages your role may open are listed).
 - **Notification bell** in the header with an unread count. New orders, new customers, products dropping below 20 in stock and accepted invitations add a notification, and you can open it, or mark everything as read. It looks again every 30 seconds, when the window is focused and when you change page. Read state is shared by everyone in this demo.
+- **Command palette:** press `Ctrl/Cmd + K` (or `/`, or use the Search button in the header) to jump to any page you may open, start a New customer, order or product, switch between light and dark mode, log out, or search customers, orders, products and team members by name, email, order number or SKU. Arrow keys and Enter pick a result.
 - **Keyboard shortcuts:** `G` then `D`, `O`, `C`, `P` or `S` jumps to the dashboard, orders, customers, products or staff, and `?` opens the shortcut list. They are ignored while you type in a field or when a dialog is open.
 - Unknown URLs (such as `/sw.js`) return a 404 rather than a placeholder page.
 
@@ -49,6 +50,8 @@ Each of the four has the same set of pages, opened from the sidebar:
 - **Create** and **Edit** forms with inline validation (zod + vee-validate). Details (`/customers/<id>`) and edit (`/customers/<id>/edit`) pages are opened from the list rows.
 - **Details** pages: a customer's profile and recent orders, an order's items, totals and customer, a product's price and stock, a team member's profile.
 - **Delete** asks for confirmation, from the list and from the details page.
+- **Export CSV** downloads everything that matches the search and filters on screen (not just the current page), in the current sort order. Spreadsheet formulas in cell values are defused.
+- **Bulk actions:** tick rows (or the header checkbox for the whole page) to set their status or delete them together. A bar shows how many are selected. If some can't be changed, for example the last admin, the rest still go through and the message says why. Selection is per page and clears when the page, search or filters change.
 - **Orders** have multiple line items (add and remove rows, with a live total). The customer and product pickers are searchable and load matches from the API as you type, so they stay short however many records there are, and a quick "Update status" menu on the details page. A customer's "View all" link opens the orders list filtered to that customer.
 - Everything you create, edit or delete shows up straight away in the lists and on the dashboard (for example under "Recently added products"). Changes are kept in server memory and reset when the dev server restarts.
 
@@ -124,8 +127,9 @@ Everyone can use the dashboard, their own profile, Help, the per-browser setting
 All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders, 12 staff members, 6 invitations, 5 notifications, 5 reminders, the store settings, 4 signed-in devices, a demo subscription with 12 invoices and 3 support requests, and lives in server memory.
 
 - Every `/api` route needs the session cookie (401 otherwise) except `server/api/auth/`, which backs the forms: `login` (a team member's email signs in with their role), `register`, `forgot-password` and `logout`. Routes also check the role (403).
+- `server/api/search` (`?q=`, 2 to 50 characters) returns the top 5 customers, orders, products and team members for the command palette, leaving out what the role may not read.
 - `server/api/notifications/` has `GET` (the newest 30 for your role and the unread count), `POST read-all` and `POST /:id/read`.
-- `server/api/<resource>/` (`customers`, `orders`, `products`, `staff`) is one set of routes for all four resources: `GET /api/<resource>` (with `page`, `pageSize`, `search`, `sort`, `order` and filters like `status`, `category`, `role` or `customerId`), `POST /api/<resource>`, and `GET`, `PUT` (partial updates) and `DELETE` on `/api/<resource>/<id>`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/`). Invalid input returns a 400 with field errors, and unknown ids a 404.
+- `server/api/<resource>/` (`customers`, `orders`, `products`, `staff`) is one set of routes for all four resources: `GET /api/<resource>` (with `page`, `pageSize`, `search`, `sort`, `order` and filters like `status`, `category`, `role` or `customerId`), `POST /api/<resource>`, `GET /api/<resource>/export` (the list as a CSV file), `POST /api/<resource>/bulk` (`{ action: "delete" | "update", ids, status }`, up to 100 ids, returning how many worked and why the others didn't), and `GET`, `PUT` (partial updates) and `DELETE` on `/api/<resource>/<id>`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/`). Invalid input returns a 400 with field errors, and unknown ids a 404.
 - `server/api/analytics/` feeds the analytics pages: `overview?range=`, `statistics` and `trends?metric=&range=&compare=`. Invalid query values return a 400.
 - `server/api/team/invitations/` handles invitations: `GET` (optionally `?status=`), `POST` to invite (409 for an existing member or a pending invitation), `DELETE /:id` to cancel, `POST /:id/resend` and `POST /:id/accept` (demo only).
 - `server/api/account/` backs the profile page: `PUT profile` and `POST password` (validated, and 400 on invalid input), plus `GET sessions`, `DELETE sessions/:id` and `DELETE sessions/others`.
@@ -150,6 +154,7 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - [x] **Profile and settings**: your account details, password and devices, store settings, appearance, notifications, idle sign-out and a data reset
 - [x] **Billing and Help**: a demo subscription with invoices, an FAQ, support requests and keyboard shortcuts
 - [x] **Roles, notifications and reminders**: enforced roles, a notification bell fed by store events and the Settings switches, and saved reminders
+- [x] **Power-user features**: a command palette with search, CSV export and bulk actions on the lists
 
 ## Tech stack
 
