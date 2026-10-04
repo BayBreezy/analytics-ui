@@ -30,7 +30,7 @@ Sign-in is a demo. There are no real passwords, the session cookie is not signed
 - **Notification bell** in the header with an unread count. New orders, new customers, products dropping below 20 in stock and accepted invitations add a notification, and you can open it, or mark everything as read. It looks again every 30 seconds, when the window is focused and when you change page. Read state is shared by everyone in this demo.
 - **Command palette:** press `Ctrl/Cmd + K` (or `/`, or use the Search button in the header) to jump to any page you may open, start a New customer, order or product, switch between light and dark mode, log out, or search customers, orders, products and team members by name, email, order number or SKU. Arrow keys and Enter pick a result.
 - **Keyboard shortcuts:** `G` then `D`, `O`, `C`, `P` or `S` jumps to the dashboard, orders, customers, products or staff, and `?` opens the shortcut list. They are ignored while you type in a field or when a dialog is open.
-- Unknown URLs (such as `/sw.js`) return a 404 rather than a placeholder page.
+- Unknown URLs (such as `/sw.js`) get a friendly 404 page, with a real 404 status. Any other error gets an error page too, and a page that fails while rendering shows a retry inside the layout, so the sidebar keeps working.
 
 ### Dashboard
 
@@ -177,20 +177,38 @@ The app runs at `http://localhost:3000`. Sign in with the demo account above, or
 
 ### Scripts
 
-| Script              | What it does                                 |
-| ------------------- | -------------------------------------------- |
-| `bun run dev`       | Start the dev server                         |
-| `bun run build`     | Build for production                         |
-| `bun run preview`   | Preview the production build                 |
-| `bun run lint`      | Lint with oxlint (`lint:fix` to fix)         |
-| `bun run format`    | Format with oxfmt (`format:check` to verify) |
-| `bun run typecheck` | Type-check the app, server and Vue files     |
+| Script              | What it does                                    |
+| ------------------- | ----------------------------------------------- |
+| `bun run dev`       | Start the dev server                            |
+| `bun run build`     | Build for production                            |
+| `bun run preview`   | Preview the production build                    |
+| `bun run lint`      | Lint with oxlint (`lint:fix` to fix)            |
+| `bun run format`    | Format with oxfmt (`format:check` to verify)    |
+| `bun run typecheck` | Type-check the app, server, Vue files and tests |
+| `bun run test`      | Run all the tests (see [Testing](#testing))     |
 
 ### Configuration
 
 | Variable                      | Default          | Description                                                                                 |
 | ----------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
 | `NUXT_PUBLIC_IDLE_TIMEOUT_MS` | `300000` (5 min) | Default inactivity time before a user is signed out. Each browser can change it in Settings |
+
+## Testing
+
+| Script              | What it runs                                                                             |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| `bun run test:unit` | [Vitest](https://vitest.dev) in Nuxt's test environment (`tests/nuxt`), in a few seconds |
+| `bun run test:api`  | [Playwright](https://playwright.dev) requests against every endpoint (`tests/api`)       |
+| `bun run test:e2e`  | Playwright in a browser (`tests/e2e`)                                                    |
+| `bun run test`      | All three                                                                                |
+
+- **Unit tests** cover the pure code: the permission matrix, CSV escaping, every zod schema, the navigation helpers, the formatters, the help content, and the page error boundary.
+- **API tests** cover sessions and roles (401 and 403), the four resources, analytics, team invitations, the account, settings and reset, billing, support, notifications, reminders, search, CSV export and bulk actions.
+- **End-to-end tests** cover signing in and out (including the idle sign-out, using a fake clock), roles, creating, editing and deleting records, export and bulk actions, the command palette and shortcuts, the profile, settings, billing, help and team pages, the bell and reminders, the 404 page, and that every page loads without console errors or hydration warnings, at 375px wide and in dark mode.
+- The API and end-to-end tests build the app and start the production server on port 3222. To use a server you already have running, set `PW_BASE_URL`, for example `PW_BASE_URL=http://localhost:3000 bunx playwright test --project=api`.
+- The mock store is shared and lives in memory, so the tests run one at a time and every test starts by resetting it.
+- The first run needs a browser: `bunx playwright install chromium`.
+- Not covered yet: an automated accessibility scan.
 
 ## Project structure
 
@@ -227,6 +245,10 @@ server/
   api/team/          invitations
   utils/             in-memory store, faker helpers and request validation
 shared/              zod schemas, types and the resource registry used by app and server
+tests/
+  nuxt/              unit tests (Vitest, Nuxt environment)
+  api/               API tests (Playwright, no browser)
+  e2e/               end-to-end tests (Playwright, browser)
 ```
 
 ## Contributing
