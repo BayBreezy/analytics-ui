@@ -6,6 +6,8 @@ An ecommerce admin dashboard built with **Nuxt 4, UI Thing, Tailwind CSS v4 and 
 
 ![The dashboard](docs/screenshots/dashboard.jpg)
 
+> **Coming from the YouTube tutorial?** The app from the [July 2023 video](https://www.youtube.com/watch?v=0ZwaOAlRAWA) is still here: [open the original version](https://github.com/BayBreezy/analytics-ui/tree/tutorial-2023) (the `tutorial-2023` branch). This repository is a ground-up rebuild of it.
+
 ## What it shows
 
 - **A real product surface:** dashboard and analytics, customers, orders, products and staff with search, filters, CSV export and bulk actions, a team page with invitations, billing, settings and help. [See all features](docs/features.md)
@@ -52,4 +54,4 @@ Open `http://localhost:3000` and click **Fill demo credentials** (`demo@analytic
 
 ## Learn more
 
-[Features](docs/features.md) · [Roles](docs/roles.md) · [Architecture](docs/architecture.md) · [Mock API](docs/api.md) · [Testing and CI](docs/testing.md) · [Contributing](docs/architecture.md#contributing)
+[Features](docs/features.md) · [Roles](docs/roles.md) · [Architecture](docs/architecture.md) · [Mock API](docs/api.md) · [Testing and CI](docs/testing.md) · [Contributing](docs/architecture.md#contributing) · [Original tutorial version](https://github.com/BayBreezy/analytics-ui/tree/tutorial-2023)
