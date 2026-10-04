@@ -34,13 +34,14 @@ Nuxt 4 + UI Thing + Tailwind v4 ecommerce admin dashboard on dummy data. Package
 - **Never add a catch-all or top-level `[param]` page.** Unknown URLs such as `/sw.js` must stay 404s (`app/middleware/auth.global.ts` relies on `to.matched`).
 - Pages are protected by default. Login/register-style pages set `definePageMeta({ auth: "guest" })`.
 - The session is the `auth-session` cookie via `useAuth()`. It is a demo, not real security.
+- Roles and permissions live in `shared/utils/permissions.ts` (`hasPermission`, `resourcePermission`). Gate a page with `definePageMeta({ permission })`, a nav item with `NavItem.permission`, a button with `useAuth().can()` (or `useResourcePermissions()` for records), and an API route with `requirePermission(event, ...)`. `server/middleware/auth.ts` returns 401 for every `/api` route without a session except `/api/auth/**`, so scripts and tests must send an `auth-session` cookie (build it from the `/api/auth/login` response).
 
 ## Data and the mock API
 
 - All data is faker-generated and held in memory (`server/utils/store.ts`). It resets on restart.
 - Customers, orders, products and staff share one API (`server/api/[resource]/`) and four generic pages (`app/resource-pages/`). To add a resource: extend `shared/utils/resources.ts`, its types and zod schema, the store/`server/utils/resources.ts`, then add `List.vue`, `Form.vue` and `Details.vue` in `app/components/<Resource>/`, and register them in `app/composables/useResourceView.ts`.
 - Analytics breakdowns are derived from the store (`server/utils/analytics.ts`), while time series are seeded (`server/utils/sales.ts`). Team invitations live in the store too (`server/api/team/`).
-- The signed-in user's profile lives in the session cookie (`useAuth().updateUser`), per-browser preferences in cookies (`usePreferences()`), and store-level data (settings, sessions, invitations, billing, support tickets) in the store. `POST /api/settings/reset` re-seeds everything, so any new collection must be added to `seed()`.
+- The signed-in user's profile lives in the session cookie (`useAuth().updateUser`), per-browser preferences in cookies (`usePreferences()`), and store-level data (settings, sessions, invitations, billing, support tickets) in the store. `POST /api/settings/reset` re-seeds everything, so any new collection must be added to `seed()`. Store events that should tell the user call `notify()` (`server/utils/notifications.ts`), which respects the in-app switches in Settings.
 - Fetch on the client with `useFetch(..., { server: false })`. Give record pages a key with `useId()` so a page opened right after another never shows stale data.
 - List state (page, search, sort, filters) lives in the URL query (`useResourceList`).
 

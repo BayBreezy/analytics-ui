@@ -10,7 +10,7 @@ This is a rebuild of the app from the July 2023 [YouTube tutorial](https://www.y
 
 ### Authentication
 
-Sign-in is a demo. There are no real accounts, nothing is stored on a server, and no email is sent. It's meant to exercise the UI and the app's routing, not to be secure.
+Sign-in is a demo. There are no real passwords, the session cookie is not signed, and no email is sent. It's meant to exercise the UI and the app's routing, not to be secure.
 
 - **Login, register and forgot-password pages**, with inline validation (zod + vee-validate), loading states, error alerts and toast notifications.
 - **Password fields** have a show/hide toggle. The register form also shows a live strength meter and requirements list.
@@ -20,13 +20,14 @@ Sign-in is a demo. There are no real accounts, nothing is stored on a server, an
 - **Returns you where you were.** After signing in you land on the last page you visited (falling back to `/dashboard`). Signed-in users who open `/login`, `/register` or `/forgot-password` are redirected away from them. Unknown URLs (for example `/sw.js` requested by a browser extension) are never remembered as a destination.
 - **Automatic sign-out when idle.** After 5 minutes without mouse, keyboard, scroll or touch activity you are signed out and shown a toast. Activity in any open tab counts, so using one tab won't sign you out of another. The timeout is configurable: pick 1, 5, 15 or 30 minutes (or never) under **Settings → Security**, and the app default is set with an environment variable (see [Configuration](#configuration)).
 
-**Demo account:** `demo@analytics.test` / `password123`. In practice, any well-formed email and a password of 8+ characters will sign you in.
+**Demo account:** `demo@analytics.test` / `password123`, an admin. Any other well-formed email and a password of 8+ characters will also sign you in as an admin, unless the email belongs to a team member (see [Roles](#roles)).
 
 ### Admin layout
 
 - **Collapsible sidebar** built with UI Thing's Sidebar. It collapses to an icon rail (with tooltips), remembers its state in a cookie, toggles with `Ctrl/Cmd + B`, and opens as a slide-over sheet on mobile.
 - **Store navigation:** Dashboard, Customers, Orders, Products, Staff, Analytics, Settings and Help, with expandable sub-menus (List and Create), active-page highlighting and breadcrumbs in the header.
-- **User menu** in the sidebar footer, with Profile, Billing, Team members and Log out.
+- **User menu** in the sidebar footer, with your role, Profile, Billing, Team members and Log out (only the pages your role may open are listed).
+- **Notification bell** in the header with an unread count. New orders, new customers, products dropping below 20 in stock and accepted invitations add a notification, and you can open it, or mark everything as read. It looks again every 30 seconds, when the window is focused and when you change page. Read state is shared by everyone in this demo.
 - **Keyboard shortcuts:** `G` then `D`, `O`, `C`, `P` or `S` jumps to the dashboard, orders, customers, products or staff, and `?` opens the shortcut list. They are ignored while you type in a field or when a dialog is open.
 - Unknown URLs (such as `/sw.js`) return a 404 rather than a placeholder page.
 
@@ -38,7 +39,7 @@ An ecommerce overview at `/dashboard`, with loading skeletons and a retry button
 - **Sales overview:** an ApexCharts revenue and orders chart with a 7 days / 30 days / 12 months switcher. It follows the light and dark theme.
 - **Recent orders** in a TanStack Table, with customer, product, status badge, amount and time.
 - **New customers**, **recent activity** (orders, sign-ups, reviews, refunds, low stock) and **recently added products** with stock status.
-- **Reminders** you can check off. Check marks are not saved yet.
+- **Reminders** you can check off, add and delete. They are saved in server memory, and a failed save puts the change back.
 
 ### Customers, orders, products and staff
 
@@ -62,7 +63,7 @@ Three pages under **Analytics** in the sidebar. The breakdowns are worked out fr
 
 ### Team members
 
-`/account/team` (from the user menu) shows your staff as a team, with search and a role filter.
+`/account/team` (from the user menu, for admins) shows your staff as a team, with search and a role filter.
 
 - **Invite a member** by email, with a role and an optional message. An email that is already on the team, or already has a pending invitation, is rejected.
 - **Invitations** are listed with their status (pending, accepted, cancelled or expired) and can be resent, copied as a link or cancelled. No email is sent. "Mark as accepted (demo)" pretends the invited person accepted, which adds them to the team.
@@ -83,7 +84,7 @@ Three pages under **Analytics** in the sidebar. The breakdowns are worked out fr
 
 - **General:** store name, support email and timezone. The store name shows in the sidebar and the browser tab title. These are saved in server memory and reset when the dev server restarts.
 - **Appearance:** light, dark or system theme, and the default number of rows per page in lists (a page size picked in the list itself still wins). Both are saved in this browser.
-- **Notifications:** email and in-app switches for new orders, low stock, new customers, the weekly report and team invitations. The choices are saved, but nothing is sent, so they have no effect yet.
+- **Notifications:** email and in-app switches for new orders, low stock, new customers, the weekly report and team invitations. The choices are saved. No emails are sent, but the in-app switches decide which events show up in the notification bell.
 - **Security:** how long until you are signed out for being idle (1, 5, 15 or 30 minutes, or never). Saved in this browser and applied straight away.
 - **Data:** reset the demo data. This replaces every customer, order, product, team change, setting and session with the original sample data. Your own account and this browser's preferences are kept.
 
@@ -106,11 +107,24 @@ Three pages under **Analytics** in the sidebar. The breakdowns are worked out fr
 - **Shortcuts:** the keyboard shortcuts above.
 - **What's new:** a timeline of what has been added to the app.
 
+### Roles
+
+The three team roles decide what you can do. Sign in with a team member's email (any password) to try one: the emails are on the Staff list, and the sidebar and user menu show your role.
+
+| Role        | Can do                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Admin**   | Everything, including the team, billing, store settings and the data reset                                         |
+| **Manager** | Create, edit and delete customers, orders and products, and use analytics. Sees the staff list but can't change it |
+| **Support** | See customers, orders, products and the dashboard, and work on orders                                              |
+
+Everyone can use the dashboard, their own profile, Help, the per-browser settings (appearance and sign-out time) and the notification bell. Pages a role can't open are left out of the navigation, and typing the URL sends you to the dashboard with a message. The API checks the same rules (401 without a session, 403 for the wrong role). Deactivated team members can't sign in. This is a demo with an unsigned cookie, so it shows how a permission system works, it isn't security.
+
 ### Mock API
 
-All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders, 12 staff members, 6 invitations, the store settings 4 signed-in devices, a demo subscription with 12 invoices and 3 support requests, and lives in server memory.
+All data is generated with faker, so there is no database. The store holds 48 customers, 60 products, 120 orders, 12 staff members, 6 invitations, 5 notifications, 5 reminders, the store settings, 4 signed-in devices, a demo subscription with 12 invoices and 3 support requests, and lives in server memory.
 
-- `server/api/auth/` backs the forms: `login`, `register`, `forgot-password` and `logout`.
+- Every `/api` route needs the session cookie (401 otherwise) except `server/api/auth/`, which backs the forms: `login` (a team member's email signs in with their role), `register`, `forgot-password` and `logout`. Routes also check the role (403).
+- `server/api/notifications/` has `GET` (the newest 30 for your role and the unread count), `POST read-all` and `POST /:id/read`.
 - `server/api/<resource>/` (`customers`, `orders`, `products`, `staff`) is one set of routes for all four resources: `GET /api/<resource>` (with `page`, `pageSize`, `search`, `sort`, `order` and filters like `status`, `category`, `role` or `customerId`), `POST /api/<resource>`, and `GET`, `PUT` (partial updates) and `DELETE` on `/api/<resource>/<id>`. Request bodies are validated with the same zod schemas the forms use (`shared/utils/`). Invalid input returns a 400 with field errors, and unknown ids a 404.
 - `server/api/analytics/` feeds the analytics pages: `overview?range=`, `statistics` and `trends?metric=&range=&compare=`. Invalid query values return a 400.
 - `server/api/team/invitations/` handles invitations: `GET` (optionally `?status=`), `POST` to invite (409 for an existing member or a pending invitation), `DELETE /:id` to cancel, `POST /:id/resend` and `POST /:id/accept` (demo only).
@@ -118,7 +132,7 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - `server/api/settings/` has `GET` and `PUT` for the store settings and `POST reset` to restore the sample data.
 - `server/api/billing/` backs the billing page: `GET` (plan, usage and cards), `PUT subscription` (409 if the store uses more than the plan allows), `POST subscription/cancel` and `subscription/resume`, `POST payment-methods/:id/default`, `GET invoices` (optionally `?status=`) and `GET invoices/:id` (a printable page, or a download with `?download=1`).
 - `server/api/support/tickets/` has `GET` and `POST` (validated) for support requests, and `POST /:id/close`.
-- `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m`, `activity` and `reminders` are seeded, and `orders`, `products` and `customers` return the newest records from the store.
+- `server/api/dashboard/` feeds the dashboard: `stats`, `sales?range=7d|30d|12m` and `activity` are seeded, `reminders` are kept in the store (`GET`, `POST`, `PUT` and `DELETE /:id`), and `orders`, `products` and `customers` return the newest records from the store.
 - Responses include a short artificial delay so the loading states are visible.
 
 ### General
@@ -135,6 +149,7 @@ All data is generated with faker, so there is no database. The store holds 48 cu
 - [x] **Analytics and team members**: overview, statistics and trends pages, and a team page with invitations
 - [x] **Profile and settings**: your account details, password and devices, store settings, appearance, notifications, idle sign-out and a data reset
 - [x] **Billing and Help**: a demo subscription with invoices, an FAQ, support requests and keyboard shortcuts
+- [x] **Roles, notifications and reminders**: enforced roles, a notification bell fed by store events and the Settings switches, and saved reminders
 
 ## Tech stack
 
