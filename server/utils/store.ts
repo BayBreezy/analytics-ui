@@ -13,6 +13,11 @@ interface Store {
   invitations: Invitation[];
   settings: Settings;
   sessions: AccountSession[];
+  billing: {
+    subscription: Subscription;
+    paymentMethods: PaymentMethod[];
+    invoices: Invoice[];
+  };
   /** Next number to use for each id prefix. */
   counters: Record<string, number>;
 }
@@ -173,6 +178,35 @@ function seed(): Store {
     current: current as boolean,
   }));
 
+  // A year of monthly invoices. The store started on Starter and moved up to Growth six months ago,
+  // and one payment failed along the way.
+  const billing = createMock(601);
+  const invoices: Invoice[] = Array.from({ length: 12 }, (_, index) => {
+    const monthsAgo = 11 - index;
+    const plan = getPlan(monthsAgo >= 6 ? "starter" : "growth");
+    const number = 5001 + index;
+    return {
+      id: `bill_${number}`,
+      number: `INV-${new Date().getFullYear()}-${number}`,
+      description: `${plan.name} plan, monthly`,
+      amount: plan.price.monthly,
+      status: monthsAgo === 8 ? "failed" : "paid",
+      issuedAt: daysAgo(monthsAgo * 30 + 18 + billing.number.float({ min: 0, max: 1 })),
+    } satisfies Invoice;
+  }).reverse();
+  const paymentMethods: PaymentMethod[] = [
+    { id: "pm_1", brand: "visa", last4: "4242", expMonth: 8, expYear: 2029, isDefault: true },
+    {
+      id: "pm_2",
+      brand: "mastercard",
+      last4: "4444",
+      expMonth: 3,
+      expYear: 2028,
+      isDefault: false,
+    },
+    { id: "pm_3", brand: "amex", last4: "0005", expMonth: 11, expYear: 2030, isDefault: false },
+  ];
+
   return {
     customers,
     orders,
@@ -181,12 +215,23 @@ function seed(): Store {
     invitations,
     settings,
     sessions,
+    billing: {
+      subscription: {
+        planId: "growth",
+        interval: "monthly",
+        status: "active",
+        renewsAt: daysAgo(-12),
+      },
+      paymentMethods,
+      invoices,
+    },
     counters: {
       cus_: 1001 + customers.length,
       prd_: 2001 + products.length,
       stf_: 301 + staff.length,
       ord_: 4822,
       inv_: 7001 + invitations.length,
+      bill_: 5001 + invoices.length,
     },
   };
 }
@@ -218,6 +263,12 @@ export const withInvitationStatus = (invitation: Invitation): Invitation =>
   invitation.status === "pending" && new Date(invitation.expiresAt).getTime() < Date.now()
     ? { ...invitation, status: "expired" }
     : invitation;
+
+/** Takes the next free number for an invoice. */
+export function nextInvoiceNumber() {
+  const counters = getStore().counters;
+  return (counters.bill_ = (counters.bill_ ?? 0) + 1) - 1;
+}
 
 /** Takes the next free number for an invitation id. */
 export function nextInvitationNumber() {
